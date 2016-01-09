@@ -1,4 +1,4 @@
-package main.client;
+package main.client.model;
 
 public class Client {
 

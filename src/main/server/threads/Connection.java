@@ -12,10 +12,9 @@ public class Connection extends Thread{
 	private ArrayList<Socket> sockets;
 	private ServerSocket serverSocket;
 	private Socket socket;
-	public Connection(ArrayList<User> users,ArrayList<Socket> sockets) throws IOException{
-		this.users=users;
-		this.sockets=sockets;
-		serverSocket=new ServerSocket(8080);
+	public Connection(int port) throws IOException{
+		
+		serverSocket=new ServerSocket(port);
 	}
 	
 	public void run(){
@@ -23,7 +22,7 @@ public class Connection extends Thread{
 			try {
 				socket=serverSocket.accept();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				this.interrupt();
 				e.printStackTrace();
 			}
 		}

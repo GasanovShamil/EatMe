@@ -29,7 +29,7 @@ public class Server {
 		
 		try{
 			SAXBuilder parser=new SAXBuilder();
-			FileReader fr=new FileReader("main"+File.separator+"server"+File.separator+"config.xml");
+			FileReader fr=new FileReader("src"+File.separator+"main"+File.separator+"server"+File.separator+"config.xml");
 			Document Doc=parser.build(fr);
 			String res=Doc.getRootElement().getAttributeValue("port");
 			port=Integer.parseInt(res);

@@ -1,10 +1,8 @@
 package main.server.threads;
 
-import java.net.Socket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -27,7 +25,7 @@ public class ServerAuthenticationThread extends Thread {
 		dbConnection=DriverManager.getConnection("jdbc:mysql://localhost:3306/dbusers",prop);
 		
 		statement=dbConnection.createStatement();
-		String query="SELECT * FROM users WHERE username='shamil'";
+		String query="SELECT * FROM users WHERE username='user'";
 		
 		resultSet=statement.executeQuery(query);
 		if(resultSet.next()) System.out.println(resultSet.getString("username"));

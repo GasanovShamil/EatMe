@@ -11,4 +11,4 @@ CREATE TABLE `users` (
 	);
 	
 	
- INSERT INTO users (username,password) VALUE ('user','pas');
+ 

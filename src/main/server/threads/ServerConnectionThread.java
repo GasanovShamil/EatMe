@@ -22,7 +22,8 @@ public class ServerConnectionThread extends Thread{
 		while(!this.isInterrupted()){
 			try {
 				socket=serverSocket.accept();
-				//ServerAuthenticationThread sat=new ServerAuthenticationThread(socket);
+				ServerAuthenticationThread sat=new ServerAuthenticationThread(socket);
+				sat.start();
 			} catch (IOException e) {
 				this.interrupt();
 				e.printStackTrace();

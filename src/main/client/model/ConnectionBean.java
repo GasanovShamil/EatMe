@@ -4,6 +4,7 @@ import java.io.Serializable;
 import main.client.model.ConnectionBean;
 
 public class ConnectionBean implements Serializable{
+	
 	private ConnectionType type;
 	
 	private String login,password;

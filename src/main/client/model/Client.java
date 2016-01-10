@@ -11,8 +11,7 @@ import java.io.OutputStream;
 
 
 public class Client {
-	private final int CREATE_ACCOUNT=0;
-	private final static int AUTHENTICATE=1;
+	
 
 	//public ConnectionBean Authentificate(){
 
@@ -27,6 +26,7 @@ public class Client {
 
 	public static void main(String[] args) throws IOException, InterruptedException, ConnectException {
 		Socket c=null;
+		
 		while(c == null){
 			try{
 				c = new Socket("localhost",8080);
@@ -39,8 +39,9 @@ public class Client {
 		OutputStream os = c.getOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 
-		ConnectionBean conect = new ConnectionBean(AUTHENTICATE, "user", "pas");
+		ConnectionBean conect = new ConnectionBean(ConnectionType.AUTHENTICATE, "user", "pas");
 		oos.writeObject(conect);
+		oos.flush();
 		oos.close();
 		os.close();
 		c.close();

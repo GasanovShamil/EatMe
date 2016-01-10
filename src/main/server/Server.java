@@ -1,4 +1,4 @@
-package main.sever;
+package main.server;
 
 import java.io.File;
 import java.io.FileReader;

@@ -1,4 +1,4 @@
-package main.sever.threads;
+package main.server.threads;
 
 import java.io.IOException;
 import java.net.ServerSocket;

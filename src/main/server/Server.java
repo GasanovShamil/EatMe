@@ -1,8 +1,10 @@
 package main.server;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -24,10 +26,11 @@ public class Server {
 		ServerConnectionThread connection= new ServerConnectionThread(conf.getPort());
 		System.out.println("Server started at port N:"+conf.getPort());
 		connection.start();
-		Scanner sc=new Scanner(System.in);
+		BufferedReader keyboard= new BufferedReader(
+													new InputStreamReader(System.in));
 		while(!flag){
 			System.out.print("Console: ");
-			String s=sc.nextLine();
+			String s=keyboard.readLine();
 			switch(s){
 			case "exit": 
 				connection.interrupt();

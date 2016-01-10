@@ -7,13 +7,14 @@ import java.util.ArrayList;
 
 import main.client.model.User;
 
-public class Connection extends Thread{
+public class ServerConnectionThread extends Thread{
 	private ArrayList<User> users;
 	private ArrayList<Socket> sockets;
 	private ServerSocket serverSocket;
 	private Socket socket;
-	public Connection(int port) throws IOException{
-		
+	
+	
+	public ServerConnectionThread(int port) throws IOException{
 		serverSocket=new ServerSocket(port);
 	}
 	

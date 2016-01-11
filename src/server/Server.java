@@ -19,16 +19,16 @@ public class Server {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		setConf();
 		users = new ArrayList<User>();
-		ServerConnectionThread connection = new ServerConnectionThread(conf.getPort(), users);
+		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users);
 		System.out.println("Server started at port N:" + conf.getPort());
-		connection.start();
+		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		while (!flag) {
 			System.out.print("Console: ");
 			String s = keyboard.readLine();
 			switch (s) {
 			case "exit":
-				connection.interrupt();
+				sat.interrupt();
 				System.exit(0);
 				break;
 			default:

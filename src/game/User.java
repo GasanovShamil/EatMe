@@ -1,4 +1,4 @@
-package main.client.model;
+package game;
 
 import java.net.Socket;
 

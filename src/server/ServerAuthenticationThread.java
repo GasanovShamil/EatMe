@@ -1,4 +1,4 @@
-package main.server.threads;
+package server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import main.client.model.ConnectionBean;
+import client.ConnectionBean;
 
 public class ServerAuthenticationThread extends Thread {
 	private Connection dbConnection = null;

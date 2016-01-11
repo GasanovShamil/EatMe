@@ -1,4 +1,4 @@
-package main.server;
+package server;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,12 +7,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
-import main.client.model.User;
-import main.server.threads.ServerConnectionThread;
+
+import game.User;
 
 
 public class Server {
@@ -53,7 +51,7 @@ public class Server {
 		
 		try{
 			SAXBuilder parser=new SAXBuilder();
-			FileReader fr=new FileReader("src"+File.separator+"main"+File.separator+"server"+File.separator+"config.xml");
+			FileReader fr=new FileReader("src"+File.separator+"config.xml");
 			Document Doc=parser.build(fr);
 			String res=Doc.getRootElement().getAttributeValue("port");
 			port=Integer.parseInt(res);

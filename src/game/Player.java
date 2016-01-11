@@ -1,4 +1,4 @@
-package main.client.model;
+package game;
 
 public class Player {
 	User user;

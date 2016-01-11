@@ -1,7 +1,7 @@
-package main.client.model;
+package client;
 import java.io.Serializable;
 
-import main.client.model.ConnectionBean;
+import client.ConnectionBean;
 
 public class ConnectionBean implements Serializable{
 	

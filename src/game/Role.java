@@ -1,4 +1,4 @@
-package main.client.model;
+package game;
 
 public abstract class Role {
 	private String name;

@@ -1,4 +1,4 @@
-package main.server;
+package server;
 
 public class ConfigurationBean {
 	private final int port;

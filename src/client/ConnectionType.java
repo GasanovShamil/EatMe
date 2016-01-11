@@ -1,4 +1,4 @@
-package main.client.model;
+package client;
 
 public enum ConnectionType {
 	AUTHENTICATE,

@@ -13,16 +13,16 @@ public abstract class Innocent extends Role {
 	public int getValue() {
 		return value;
 	}
-	
+
 	public boolean isTrap() {
 		return trap;
 	}
-	
-	public void Sleep(){
+
+	public void Sleep() {
 		trap = false;
 	}
-	
-	public void PutTrap(){
+
+	public void PutTrap() {
 		trap = true;
 	}
 }

@@ -12,7 +12,7 @@ public class Game {
 		this.players = players;
 		numRound = 0;
 		loser = -1;
-		
+
 		int size = players.length;
 		ArrayList<Role> roles = new ArrayList<Role>();
 		Random random = new Random();

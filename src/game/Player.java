@@ -42,6 +42,6 @@ public class Player {
 
 	public void chooseRoles() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

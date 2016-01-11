@@ -15,6 +15,7 @@ public class Client {
 	private String username;
 	private String password;
 	private Integer userID;
+	private boolean connected;
 
 	public Client(String serverAdress, int serverPort, String username, String password) {
 		socket = null;
@@ -23,9 +24,18 @@ public class Client {
 		this.username = username;
 		this.password = password;
 		userID = 0;
+		connected = false;
+	}
+	
+	public String getUsername(){
+		return username;
+	}
+	
+	public boolean isConnected(){
+		return connected;
 	}
 
-	public boolean connect(ConnectionType type) {
+	public void connect(ConnectionType type) {
 		try {
 			socket = new Socket(serverAdress, serverPort);
 			ObjectOutputStream oos;
@@ -37,14 +47,14 @@ public class Client {
 
 			if (userID > 0) {
 				System.out.println("Vous êtes connecté sur le serveur.");
-				return true;
+				connected = true;
 			} else {
 				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
-				return false;
+				connected = false;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			connected = false;
 		}
 	}
 }

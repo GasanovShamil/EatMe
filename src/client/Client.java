@@ -25,7 +25,7 @@ public class Client {
 		OutputStream os = c.getOutputStream();
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 
-		ConnectionBean conect = new ConnectionBean(ConnectionType.AUTHENTICATE, "user", "pas");
+		ConnectionBean conect = new ConnectionBean(ConnectionType.AUTHENTICATE, "milan", "milan");
 		oos.writeObject(conect);
 		oos.flush();
 		oos.close();

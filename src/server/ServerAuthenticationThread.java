@@ -43,7 +43,7 @@ public class ServerAuthenticationThread extends Thread {
 	public void run() {
 
 		try {
-			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbusers", prop);
+			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
 			statement = dbConnection.createStatement();
 			if (connectionBean.getType() == ConnectionType.AUTHENTICATE) {
 				authenticate();
@@ -64,7 +64,8 @@ public class ServerAuthenticationThread extends Thread {
 	 * @return true s'il y a un utilisateur dans BD et false sinon
 	 */
 	public boolean authenticate() throws SQLException {
-		String query = "SELECT * FROM users WHERE username=\"" + connectionBean.getLogin() + "\"";
+		String query = "SELECT * FROM users WHERE username='" + connectionBean.getLogin() + "' AND password=MD5('"
+				+ connectionBean.getPassword() + "');";
 		resultSet = statement.executeQuery(query);
 		if (resultSet.next()) {
 			System.out.println("Hello " + resultSet.getString("username") + "\n Console: ");
@@ -73,7 +74,6 @@ public class ServerAuthenticationThread extends Thread {
 			System.out.println("There is no user with this name: " + connectionBean.getLogin() + "\n Console: ");
 			return false;
 		}
-
 	}
 
 	public boolean createAccount() {

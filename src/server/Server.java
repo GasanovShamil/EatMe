@@ -34,7 +34,7 @@ public class Server {
 				connection.interrupt();
 				System.exit(0);
 				break;
-			default: System.out.println("Help: \n exit - arreter le serveur \n help - l'affichage d'aide" );
+			default: System.out.println("Help: \n exit - arreter le serveur" );
 			}
 		}
 	}

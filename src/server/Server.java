@@ -13,14 +13,15 @@ import org.jdom2.input.SAXBuilder;
 import game.User;
 
 public class Server {
-	private ArrayList<User> users;
-	private ArrayList<Socket> sockets;
+	private static ArrayList<User> users;
+	private static ArrayList<Socket> sockets;
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		setConf();
-		ServerConnectionThread connection = new ServerConnectionThread(conf.getPort());
+		users=new ArrayList<User>();
+		ServerConnectionThread connection = new ServerConnectionThread(conf.getPort(),users);
 		System.out.println("Server started at port N:" + conf.getPort());
 		connection.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));

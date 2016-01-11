@@ -14,7 +14,8 @@ public class ServerConnectionThread extends Thread{
 	private Socket socket;
 	
 	
-	public ServerConnectionThread(int port) throws IOException{
+	public ServerConnectionThread(int port, ArrayList<User> users) throws IOException{
+		this.users=users;
 		serverSocket=new ServerSocket(port);
 	}
 	
@@ -22,7 +23,7 @@ public class ServerConnectionThread extends Thread{
 		while(!this.isInterrupted()){
 			try {
 				socket=serverSocket.accept();
-				ServerAuthenticationThread sat=new ServerAuthenticationThread(socket);
+				ServerAuthenticationThread sat=new ServerAuthenticationThread(socket, users);
 				sat.start();
 			} catch (IOException e) {
 				this.interrupt();

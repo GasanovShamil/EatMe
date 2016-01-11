@@ -7,23 +7,21 @@ import java.util.ArrayList;
 
 import game.User;
 
-public class ServerConnectionThread extends Thread{
+public class ServerConnectionThread extends Thread {
 	private ArrayList<User> users;
-	private ArrayList<Socket> sockets;
 	private ServerSocket serverSocket;
 	private Socket socket;
-	
-	
-	public ServerConnectionThread(int port, ArrayList<User> users) throws IOException{
-		this.users=users;
-		serverSocket=new ServerSocket(port);
+
+	public ServerConnectionThread(int port, ArrayList<User> users) throws IOException {
+		this.users = users;
+		serverSocket = new ServerSocket(port);
 	}
-	
-	public void run(){
-		while(!this.isInterrupted()){
+
+	public void run() {
+		while (!this.isInterrupted()) {
 			try {
-				socket=serverSocket.accept();
-				ServerAuthenticationThread sat=new ServerAuthenticationThread(socket, users);
+				socket = serverSocket.accept();
+				ServerAuthenticationThread sat = new ServerAuthenticationThread(socket, users);
 				sat.start();
 			} catch (IOException e) {
 				this.interrupt();

@@ -21,39 +21,34 @@ public class ServerAuthenticationThread extends Thread {
 	private Statement statement = null;
 	private ResultSet resultSet = null;
 	private ArrayList<User> users;
-	private Properties prop;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	private ConnectionBean connectionBean;
-	private Socket s;
+	private Socket socket;
 
-	public ServerAuthenticationThread(Socket s, ArrayList<User> users) {
-		this.s = s;
-		prop = new Properties();
-		prop.put("characterEncoding", "UTF8");
-		prop.put("user", "root");
-		prop.put("password", "root");
+	public ServerAuthenticationThread(Socket socket, ArrayList<User> users) {
+		this.socket = socket;
 		try {
-			input = new ObjectInputStream(s.getInputStream());
-			output = new ObjectOutputStream(s.getOutputStream());
+			input = new ObjectInputStream(socket.getInputStream());
+			output = new ObjectOutputStream(socket.getOutputStream());
 			connectionBean = (ConnectionBean) input.readObject();
 		} catch (IOException | ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
 
 	public void run() {
-
 		try {
+			Properties prop = new Properties();
+			prop.put("characterEncoding", "UTF8");
+			prop.put("user", "root");
+			prop.put("password", "root");
 			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
 			statement = dbConnection.createStatement();
 			if (connectionBean.getType() == ConnectionType.AUTHENTICATE) {
 				authenticate();
 			}
-
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -71,8 +66,8 @@ public class ServerAuthenticationThread extends Thread {
 				+ connectionBean.getPassword() + "');";
 		resultSet = statement.executeQuery(query);
 		if (resultSet.next()) {
-			System.out.println("Hello " + resultSet.getString("username") + "\n Console: ");
-			User u = new User(resultSet.getString("username"), s);
+			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
+			User u = new User(resultSet.getString("username"), socket);
 			try {
 				synchronized (users) {
 					users.add(u);
@@ -80,7 +75,6 @@ public class ServerAuthenticationThread extends Thread {
 				output.writeObject(u);
 				output.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return true;
@@ -91,10 +85,8 @@ public class ServerAuthenticationThread extends Thread {
 				output.writeObject(u);
 				output.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 			return false;
 		}
 	}
@@ -107,20 +99,19 @@ public class ServerAuthenticationThread extends Thread {
 					+ connectionBean.getPassword() + "'));";
 			resultSet = statement.executeQuery(query);
 			System.out.println("Hello " + resultSet.getString("username") + "\n Console: ");
-			User u = new User(resultSet.getString("username"), s);
+			User user = new User(resultSet.getString("username"), socket);
 			try {
 				synchronized (users) {
-					users.add(u);
+					users.add(user);
 				}
-				output.writeObject(u);
+				output.writeObject(user);
 				output.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return true;
 		} else {
-			System.out.println("Il y a deja un utilisateur avec ce nom: " + connectionBean.getLogin() + "\n Console: ");
+			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
 			return false;
 		}
 	}

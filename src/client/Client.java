@@ -1,10 +1,12 @@
 package client;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import game.User;
 
 public class Client {
 	private Socket socket;
@@ -12,6 +14,7 @@ public class Client {
 	private int serverPort;
 	private String username;
 	private String password;
+	private User user;
 
 	public Client(String serverAdress, int serverPort, String username, String password) {
 		socket = null;
@@ -19,41 +22,29 @@ public class Client {
 		this.serverPort = serverPort;
 		this.username = username;
 		this.password = password;
+		user = null;
 	}
 
-	private void connectToServer() {
-		while (socket == null) {
-			try {
-				socket = new Socket(serverAdress, serverPort);
-				System.out.println("Vous êtes connecté sur le serveur.");
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				try {
-					Thread.sleep(10000);
-				} catch (InterruptedException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public void connect() {
-		connectToServer();
-		ObjectOutputStream oos;
+	public boolean connect(ConnectionType type) {
 		try {
+			socket = new Socket(serverAdress, serverPort);
+			ObjectOutputStream oos;
 			oos = new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(new ConnectionBean(ConnectionType.AUTHENTICATE, username, password));
+			oos.writeObject(new ConnectionBean(type, username, password));
 			oos.flush();
-			oos.close();
-		} catch (IOException e) {
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			user = (User) ois.readObject();
+
+			if (user != null) {
+				System.out.println("Vous êtes connecté sur le serveur.");
+				return true;
+			} else {
+				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
+				return false;
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 	}
 }

@@ -4,26 +4,56 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Client {
+	private Socket socket;
+	private String serverAdress;
+	private int serverPort;
+	private String username;
+	private String password;
 
-	public static void main(String[] args) throws IOException, InterruptedException, ConnectException {
+	public Client(String serverAdress, int serverPort, String username, String password) {
+		socket = null;
+		this.serverAdress = serverAdress;
+		this.serverPort = serverPort;
+		this.username = username;
+		this.password = password;
+	}
 
-		Socket c = null;
-		while (c == null) {
+	private void connectToServer() {
+		while (socket == null) {
 			try {
-				c = new Socket("localhost", 8080);
-				System.out.println("Client\n Local port: " + c.getLocalPort() + " - Target port: " + c.getPort());
-				System.out.println("connectÃ© au serveur " + c.getInetAddress());
-			} catch (ConnectException e) {
-				Thread.sleep(1000);
+				socket = new Socket(serverAdress, serverPort);
+				System.out.println("Vous êtes connecté sur le serveur.");
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
 			}
 		}
+	}
 
-		ObjectOutputStream oos = new ObjectOutputStream(c.getOutputStream());
-		oos.writeObject(new ConnectionBean(ConnectionType.AUTHENTICATE, "milan", "milan"));
-		oos.flush();
-		oos.close();
-		c.close();
+	public void connect() {
+		connectToServer();
+		ObjectOutputStream oos;
+		try {
+			oos = new ObjectOutputStream(socket.getOutputStream());
+			oos.writeObject(new ConnectionBean(ConnectionType.AUTHENTICATE, username, password));
+			oos.flush();
+			oos.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

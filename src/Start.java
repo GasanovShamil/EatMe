@@ -16,14 +16,14 @@ public class Start {
 		try {
 			String s = keyboard.readLine().toLowerCase().trim();
 			switch (s) {
-			case "s":
-			case "serveur":
-				new Server();
-				break;
-			case "c":
-			case "client":
-				new Client();
-				break;
+//			case "s":
+//			case "serveur":
+//				new Server();
+//				break;
+//			case "c":
+//			case "client":
+//				new ClientConsole();
+//				break;
 			case "h":
 			case "help":
 				System.out.println("COMMANDES");

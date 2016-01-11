@@ -36,8 +36,8 @@ public class Client {
 	public boolean isConnected() {
 		return connected;
 	}
-	
-	public void send(Object object) throws IOException{
+
+	public void send(Object object) throws IOException {
 		output.writeObject(object);
 		output.flush();
 	}
@@ -47,7 +47,7 @@ public class Client {
 			socket = new Socket(serverAdress, serverPort);
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
-			
+
 			send(new ConnectionBean(type, username, password));
 			userID = (Integer) input.readObject();
 

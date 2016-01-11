@@ -76,9 +76,7 @@ public class ServerConnectionThread extends Thread {
 		if (resultSet.next()) {
 			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
-			try {
-
-				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
+			try {				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();

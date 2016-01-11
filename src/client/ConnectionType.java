@@ -1,6 +1,5 @@
 package client;
 
 public enum ConnectionType {
-	AUTHENTICATE,
-	CREATE_ACCOUNT
+	AUTHENTICATE, CREATE_ACCOUNT
 }

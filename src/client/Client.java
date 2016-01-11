@@ -10,6 +10,8 @@ import game.User;
 
 public class Client {
 	private Socket socket;
+	private ObjectInputStream input;
+	private ObjectOutputStream output;
 	private String serverAdress;
 	private int serverPort;
 	private String username;
@@ -26,24 +28,28 @@ public class Client {
 		userID = 0;
 		connected = false;
 	}
-	
-	public String getUsername(){
+
+	public String getUsername() {
 		return username;
 	}
-	
-	public boolean isConnected(){
+
+	public boolean isConnected() {
 		return connected;
+	}
+	
+	public void send(Object object) throws IOException{
+		output.writeObject(object);
+		output.flush();
 	}
 
 	public void connect(ConnectionType type) {
 		try {
 			socket = new Socket(serverAdress, serverPort);
-			ObjectOutputStream oos;
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(new ConnectionBean(type, username, password));
-			oos.flush();
-			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			userID = (Integer) ois.readObject();
+			input = new ObjectInputStream(socket.getInputStream());
+			output = new ObjectOutputStream(socket.getOutputStream());
+			
+			send(new ConnectionBean(type, username, password));
+			userID = (Integer) input.readObject();
 
 			if (userID > 0) {
 				System.out.println("Vous êtes connecté sur le serveur.");

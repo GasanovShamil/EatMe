@@ -18,13 +18,13 @@ import game.User;
 
 public class ServerConnectionThread extends Thread {
 	private Connection dbConnection = null;
-	private ArrayList<User> users;
+	private ArrayList<ServerUserThread> users;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	private ConnectionBean connectionBean;
 	private Socket socket;
 
-	public ServerConnectionThread(Socket socket, ArrayList<User> users) {
+	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users) {
 		this.users = users;
 		this.socket = socket;
 		try {
@@ -43,11 +43,18 @@ public class ServerConnectionThread extends Thread {
 			prop.put("user", "root");
 			prop.put("password", "root");
 			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
+			User user = null;
 			if (connectionBean.getType() == ConnectionType.AUTHENTICATE) {
-				authenticate();
+				user = authenticate();
 			} else if (connectionBean.getType() == ConnectionType.CREATE_ACCOUNT) {
-				createAccount();
+				user = createAccount();
 			}
+			ServerUserThread sut = new ServerUserThread(user);
+			sut.start();
+			synchronized (users) {
+				users.add(sut);
+			}
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -59,26 +66,24 @@ public class ServerConnectionThread extends Thread {
 	 * Interroge la base de donnee pour trouver l'utilisateur
 	 * </p>
 	 * 
-	 * @return true s'il y a un utilisateur dans BD et false sinon
+	 * @return Object User s'il y a un utilisateur dans BD et null sinon
 	 */
-	public boolean authenticate() throws SQLException {
+	public User authenticate() throws SQLException {
 		String query = "SELECT * FROM users WHERE username='" + connectionBean.getLogin() + "' AND password=MD5('"
 				+ connectionBean.getPassword() + "');";
 		Statement statement = dbConnection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
 		if (resultSet.next()) {
 			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
-			User u = new User(resultSet.getString("username"), socket);
+
 			try {
-				synchronized (users) {
-					users.add(u);
-				}
+
 				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return true;
+			return new User(resultSet.getString("username"), socket);
 		} else {
 			System.out.println("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
 
@@ -88,11 +93,19 @@ public class ServerConnectionThread extends Thread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return false;
+			return null;
 		}
 	}
 
-	public boolean createAccount() throws SQLException {
+	
+	/**
+	 * <p>
+	 * Créer un compte sur la base de donnee
+	 * </p>
+	 * 
+	 * @return Object User dans le cas de succes et null sinon
+	 */
+	public User createAccount() throws SQLException {
 		String query = "SELECT * FROM users WHERE username='" + connectionBean.getLogin() + "';";
 		Statement statement = dbConnection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
@@ -107,16 +120,14 @@ public class ServerConnectionThread extends Thread {
 				resultSet = statement.executeQuery(query);
 				resultSet.next();
 				System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
-				User user = new User(resultSet.getString("username"), socket);
-				synchronized (users) {
-					users.add(user);
-				}
+
 				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return true;
+			return new User(resultSet.getString("username"), socket);
+
 		} else {
 			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
 			try {
@@ -125,7 +136,7 @@ public class ServerConnectionThread extends Thread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return false;
+			return null;
 		}
 	}
 }

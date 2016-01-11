@@ -9,16 +9,14 @@ import java.util.ArrayList;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 
-import game.User;
-
 public class Server {
-	private static ArrayList<User> users;
+	private static ArrayList<ServerUserThread> users;
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		setConf();
-		users = new ArrayList<User>();
+		users = new ArrayList<ServerUserThread>();
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users);
 		System.out.println("Server started at port N:" + conf.getPort());
 		sat.start();

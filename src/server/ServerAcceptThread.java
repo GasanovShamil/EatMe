@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import game.User;
 
 public class ServerAcceptThread extends Thread {
-	private ArrayList<User> users;
+	private ArrayList<ServerUserThread> users;
 	private ServerSocket serverSocket;
 	private Socket socket;
 
-	public ServerAcceptThread(int port, ArrayList<User> users) throws IOException {
+	public ServerAcceptThread(int port, ArrayList<ServerUserThread> users) throws IOException {
 		this.users = users;
 		serverSocket = new ServerSocket(port);
 	}

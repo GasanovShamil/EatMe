@@ -20,13 +20,8 @@ public class Client {
 	public Client(String serverAdress, int serverPort, String username, String password) {
 		try {
 			socket = new Socket(serverAdress, serverPort);
-			synchronized (socket) {
-				input = new ObjectInputStream(socket.getInputStream());
-			}
-			synchronized (socket) {
-				output = new ObjectOutputStream(socket.getOutputStream());
-				output.flush();
-			}
+			input = new ObjectInputStream(socket.getInputStream());
+			output = new ObjectOutputStream(socket.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

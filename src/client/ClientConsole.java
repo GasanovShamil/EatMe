@@ -13,7 +13,6 @@ public class ClientConsole {
 		System.out.println("*************************************\n");
 
 		boolean flag = false;
-		Client client = null;
 
 		while (!flag) {
 			// port = 9443
@@ -47,7 +46,7 @@ public class ClientConsole {
 			System.out.print("Entrez votre mot de passe : ");
 			String password = keyboard.readLine();
 
-			client = new Client(serverAdress, Integer.parseInt(serverPort), username, password);
+			Client client = new Client(serverAdress, Integer.parseInt(serverPort), username, password);
 			client.connect(type);
 			flag = client.isConnected();
 		}
@@ -62,23 +61,18 @@ public class ClientConsole {
 			String choix = keyboard.readLine();
 			switch (choix) {
 			case "1":
-				client.send(Message.START_3P);
 				break;
 				
 			case "2":
-				client.send(Message.START_4P);
 				break;
 				
 			case "3":
-				client.send(Message.START_5P);
 				break;
 				
 			case "4":
-				client.send(Message.START_6P);
 				break;
 
 			case "999":
-				client.send(Message.DECONNECT);
 				break;
 
 			default:

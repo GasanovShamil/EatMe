@@ -3,12 +3,14 @@ package game;
 public class Player {
 	private String username;
 	private Role role;
+	private Player[] players;
 	private int points;
 	private int position;
 
-	public Player(String username, int position) {
+	public Player(String username, Player[] players, int position) {
 		this.username = username;
 		role = null;
+		this.players = players;
 		points = 0;
 		this.position = position;
 	}
@@ -39,6 +41,7 @@ public class Player {
 	}
 
 	public void chooseRoles() {
+		// TODO Auto-generated method stub
 
 	}
 }

@@ -27,6 +27,7 @@ public class ServerAuthenticationThread extends Thread {
 	private Socket socket;
 
 	public ServerAuthenticationThread(Socket socket, ArrayList<User> users) {
+		this.users = users;
 		this.socket = socket;
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
@@ -47,6 +48,8 @@ public class ServerAuthenticationThread extends Thread {
 			statement = dbConnection.createStatement();
 			if (connectionBean.getType() == ConnectionType.AUTHENTICATE) {
 				authenticate();
+			} else if (connectionBean.getType() == ConnectionType.CREATE_ACCOUNT) {
+				createAccount();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -72,17 +75,17 @@ public class ServerAuthenticationThread extends Thread {
 				synchronized (users) {
 					users.add(u);
 				}
-				output.writeObject(u);
+				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			return true;
 		} else {
-			System.out.println("There is no user with this name: " + connectionBean.getLogin() + "\n Console: ");
-			User u = null;
+			System.out.println("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
+
 			try {
-				output.writeObject(u);
+				output.writeObject(new Integer(-1));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -97,14 +100,20 @@ public class ServerAuthenticationThread extends Thread {
 		if (!resultSet.next()) {
 			query = "INSERT INTO users (username, password) VALUE ('" + connectionBean.getLogin() + "', MD5('"
 					+ connectionBean.getPassword() + "'));";
-			resultSet = statement.executeQuery(query);
-			System.out.println("Hello " + resultSet.getString("username") + "\n Console: ");
-			User user = new User(resultSet.getString("username"), socket);
+			statement.executeUpdate(query);
+			
+			
 			try {
+				query = "SELECT * FROM users WHERE username='" + connectionBean.getLogin() + "' AND password=MD5('"
+						+ connectionBean.getPassword() + "');";
+				resultSet = statement.executeQuery(query);
+				resultSet.next();
+				System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
+				User user = new User(resultSet.getString("username"), socket);
 				synchronized (users) {
 					users.add(user);
 				}
-				output.writeObject(user);
+				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -112,6 +121,12 @@ public class ServerAuthenticationThread extends Thread {
 			return true;
 		} else {
 			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
+			try {
+				output.writeObject(new Integer(-1));
+				output.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return false;
 		}
 	}

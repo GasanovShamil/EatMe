@@ -14,7 +14,7 @@ public class Client {
 	private int serverPort;
 	private String username;
 	private String password;
-	private User user;
+	private Integer userID;
 
 	public Client(String serverAdress, int serverPort, String username, String password) {
 		socket = null;
@@ -22,7 +22,7 @@ public class Client {
 		this.serverPort = serverPort;
 		this.username = username;
 		this.password = password;
-		user = null;
+		userID = 0;
 	}
 
 	public boolean connect(ConnectionType type) {
@@ -33,9 +33,9 @@ public class Client {
 			oos.writeObject(new ConnectionBean(type, username, password));
 			oos.flush();
 			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			user = (User) ois.readObject();
+			userID = (Integer) ois.readObject();
 
-			if (user != null) {
+			if (userID > 0) {
 				System.out.println("Vous êtes connecté sur le serveur.");
 				return true;
 			} else {

@@ -11,7 +11,7 @@ public class ClientConsole {
 		System.out.println("*************************************");
 		System.out.println("* Bienvenue Sur Eat Me If You Can ! *");
 		System.out.println("*************************************\n");
-
+		//port = 9443
 		System.out.print("Entrez l'adresse du serveur : ");
 		String serverAdress = keyboard.readLine();
 		System.out.print("Entrez le port du serveur : ");

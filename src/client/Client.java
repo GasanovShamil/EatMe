@@ -10,6 +10,8 @@ import game.User;
 
 public class Client {
 	private Socket socket;
+	ObjectOutputStream output;
+	ObjectInputStream input;
 	private String serverAdress;
 	private int serverPort;
 	private String username;
@@ -18,7 +20,15 @@ public class Client {
 	private boolean connected;
 
 	public Client(String serverAdress, int serverPort, String username, String password) {
-		socket = null;
+		try {
+			socket = new Socket(serverAdress, serverPort);
+			output = new ObjectOutputStream(socket.getOutputStream());
+			
+			input = new ObjectInputStream(socket.getInputStream());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.serverAdress = serverAdress;
 		this.serverPort = serverPort;
 		this.username = username;
@@ -34,16 +44,31 @@ public class Client {
 	public boolean isConnected(){
 		return connected;
 	}
+	
+	public void send(Object obj){
+		try {
+			output.writeObject(obj);
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public Object recieve(){
+		try {
+			return input.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public void connect(ConnectionType type) {
 		try {
-			socket = new Socket(serverAdress, serverPort);
-			ObjectOutputStream oos;
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(new ConnectionBean(type, username, password));
-			oos.flush();
-			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-			userID = (Integer) ois.readObject();
+			send(new ConnectionBean(type, username, password));
+			userID = (Integer) recieve();
 
 			if (userID > 0) {
 				System.out.println("Vous êtes connecté sur le serveur.");

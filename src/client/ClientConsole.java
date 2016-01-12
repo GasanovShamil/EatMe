@@ -14,7 +14,7 @@ public class ClientConsole {
 
 		Client client = null;
 		boolean flag = false;
-		boolean test = true;
+		boolean test = false;
 
 		while (!flag) {
 			if (!test) {

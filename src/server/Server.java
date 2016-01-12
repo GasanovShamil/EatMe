@@ -14,7 +14,7 @@ public class Server {
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public Server() throws IOException, InterruptedException {
 		setConf();
 		users = new ArrayList<ServerUserThread>();
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users);
@@ -43,7 +43,7 @@ public class Server {
 	 * 
 	 * @return ConfigurationBean- object pour configurer le serveur
 	 */
-	private static void setConf() {
+	private void setConf() {
 		int port = 0;
 
 		try {

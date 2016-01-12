@@ -58,7 +58,6 @@ public class ServerConnectionThread extends Thread {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -77,7 +76,6 @@ public class ServerConnectionThread extends Thread {
 			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
 			try {
-
 				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {
@@ -96,7 +94,6 @@ public class ServerConnectionThread extends Thread {
 			return null;
 		}
 	}
-
 	
 	/**
 	 * <p>
@@ -131,7 +128,7 @@ public class ServerConnectionThread extends Thread {
 		} else {
 			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
 			try {
-				output.writeObject(new Integer(-1));
+				output.writeObject(new Integer(-2));
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();

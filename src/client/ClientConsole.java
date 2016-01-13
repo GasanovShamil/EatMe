@@ -69,6 +69,8 @@ public class ClientConsole {
 			String choix = keyboard.readLine();
 			switch (choix) {
 			case "1":
+				client.send(Message.START_3P);
+				flag = true;
 				break;
 
 			case "2":

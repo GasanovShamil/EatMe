@@ -19,14 +19,16 @@ import game.User;
 public class ServerConnectionThread extends Thread {
 	private Connection dbConnection = null;
 	private ArrayList<ServerUserThread> users;
+	private Queue queue;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 	private ConnectionBean connectionBean;
 	private Socket socket;
-
-	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users) {
+	private ServerUserThread serverUserThread;
+	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue) {
 		this.users = users;
 		this.socket = socket;
+		this.queue=queue;
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
@@ -49,10 +51,12 @@ public class ServerConnectionThread extends Thread {
 			} else if (connectionBean.getType() == ConnectionType.CREATE_ACCOUNT) {
 				user = createAccount();
 			}
-			ServerUserThread sut = new ServerUserThread(user);
-			sut.start();
+			synchronized(queue){
+				serverUserThread = new ServerUserThread(user, queue);
+			}
+			serverUserThread.start();
 			synchronized (users) {
-				users.add(sut);
+				users.add(serverUserThread);
 			}
 
 		} catch (SQLException e) {
@@ -83,7 +87,7 @@ public class ServerConnectionThread extends Thread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return new User(resultSet.getString("username"), socket);
+			return new User(resultSet.getString("username"), socket, input, output);
 		} else {
 			System.out.println("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
 
@@ -126,7 +130,7 @@ public class ServerConnectionThread extends Thread {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			return new User(resultSet.getString("username"), socket);
+			return new User(resultSet.getString("username"), socket, input, output);
 
 		} else {
 			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");

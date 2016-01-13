@@ -11,13 +11,15 @@ import org.jdom2.input.SAXBuilder;
 
 public class Server {
 	private static ArrayList<ServerUserThread> users;
+	private static Queue queue;
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		setConf();
 		users = new ArrayList<ServerUserThread>();
-		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users);
+		queue = new Queue();
+		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue);
 		System.out.println("Server started at port N:" + conf.getPort());
 		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));

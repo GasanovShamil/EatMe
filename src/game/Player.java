@@ -1,22 +1,20 @@
 package game;
 
 public class Player {
-	private String username;
+	private User user;
 	private Role role;
-	private Player[] players;
 	private int points;
 	private int position;
 
-	public Player(String username, Player[] players, int position) {
-		this.username = username;
+	public Player(User user, int position) {
+		this.user = user;
 		role = null;
-		this.players = players;
 		points = 0;
 		this.position = position;
 	}
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
 	public Role getRole() {

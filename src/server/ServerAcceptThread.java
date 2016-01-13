@@ -11,7 +11,6 @@ public class ServerAcceptThread extends Thread {
 	private ArrayList<ServerUserThread> users;
 	private Queue queue;
 	private ServerSocket serverSocket;
-	private Socket socket;
 	private ServerConnectionThread serverConnectionThread;
 	public ServerAcceptThread(int port, ArrayList<ServerUserThread> users, Queue queue) throws IOException {
 		this.users = users;
@@ -20,6 +19,7 @@ public class ServerAcceptThread extends Thread {
 	}
 
 	public void run() {
+		Socket socket=null;
 		while (!this.isInterrupted()) {
 			try {
 				socket = serverSocket.accept();
@@ -31,6 +31,7 @@ public class ServerAcceptThread extends Thread {
 				this.interrupt();
 				e.printStackTrace();
 			}
+			socket=null;
 		}
 	}
 }

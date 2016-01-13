@@ -18,13 +18,13 @@ import game.User;
 
 public class ServerConnectionThread extends Thread {
 	private Connection dbConnection = null;
-	private ArrayList<ServerUserThread> users;
-	private Queue queue;
-	private ObjectInputStream input;
-	private ObjectOutputStream output;
-	private ConnectionBean connectionBean;
-	private Socket socket;
-	private ServerUserThread serverUserThread;
+	private ArrayList<ServerUserThread> users=null;
+	private Queue queue=null;
+	private ObjectInputStream input=null;
+	private ObjectOutputStream output=null;
+	private ConnectionBean connectionBean=null;
+	private Socket socket=null;
+	private ServerUserThread serverUserThread=null;
 	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue) {
 		this.users = users;
 		this.socket = socket;

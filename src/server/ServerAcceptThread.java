@@ -22,11 +22,13 @@ public class ServerAcceptThread extends Thread {
 		Socket socket=null;
 		while (!this.isInterrupted()) {
 			try {
+				System.out.println("users : "+users.size());
 				socket = serverSocket.accept();
 				synchronized(queue){
 					serverConnectionThread = new ServerConnectionThread(socket, users, queue);
 				}
 				serverConnectionThread.start();
+				
 			} catch (IOException e) {
 				this.interrupt();
 				e.printStackTrace();

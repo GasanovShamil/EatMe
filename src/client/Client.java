@@ -48,16 +48,16 @@ public class Client {
 	public void send(Object obj){
 		try {
 			output.writeObject(obj);
-			//Thread.sleep(1000);
-			//output.flush();
+			Thread.sleep(1000);
+			output.flush();
 			System.out.println("j'envoie le message");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}/* catch (InterruptedException e) {
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}*/
+		}
 		
 	}
 	

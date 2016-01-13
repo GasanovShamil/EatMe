@@ -26,7 +26,12 @@ public class User implements Serializable {
 	public void send(Object obj) {
 		try {
 			output.writeObject(obj);
+			Thread.sleep(1000);
+			output.flush();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

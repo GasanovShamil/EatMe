@@ -74,12 +74,18 @@ public class ClientConsole {
 				break;
 
 			case "2":
+				client.send(Message.START_4P);
+				flag = true;
 				break;
 
 			case "3":
+				client.send(Message.START_5P);
+				flag = true;
 				break;
 
 			case "4":
+				client.send(Message.START_6P);
+				flag = true;
 				break;
 
 			case "999":

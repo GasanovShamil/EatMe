@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
@@ -19,8 +20,9 @@ public class Server {
 		setConf();
 		users = new ArrayList<ServerUserThread>();
 		queue = new Queue();
+		InetAddress addr=InetAddress.getLocalHost();
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue);
-		System.out.println("Server started at port N:" + conf.getPort());
+		System.out.println("Server started at port N:" + conf.getPort()+ " IP : "+addr.getHostAddress());
 		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		while (!flag) {

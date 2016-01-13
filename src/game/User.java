@@ -32,18 +32,17 @@ public class User implements Serializable {
 	}
 
 	public Object recieve() {
-		
-			try {
-				return input.readObject();
-			} catch (ClassNotFoundException e) {
-				System.out.println("CFE");
-				e.printStackTrace();
-				return null;
-			} catch (IOException e) {
-				System.out.println("IO");
-				e.printStackTrace();
-				return null;
-			}
-		
+		try {
+			return input.readObject();
+		} catch (ClassNotFoundException e) {
+			System.out.println("CFE");
+			e.printStackTrace();
+			
+		} catch (IOException e) {
+			System.out.println("IO");
+			e.printStackTrace();
+			
+		}
+		return null;
 	}
 }

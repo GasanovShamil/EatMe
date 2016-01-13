@@ -49,6 +49,7 @@ public class Client {
 		try {
 			output.writeObject(obj);
 			output.flush();
+			System.out.println("j'envoie le message");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,6 +60,7 @@ public class Client {
 	public Object recieve(){
 		try {
 			return input.readObject();
+			
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
 			return null;

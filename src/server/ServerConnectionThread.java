@@ -18,17 +18,18 @@ import game.User;
 
 public class ServerConnectionThread extends Thread {
 	private Connection dbConnection = null;
-	private ArrayList<ServerUserThread> users=null;
-	private Queue queue=null;
-	private ObjectInputStream input=null;
-	private ObjectOutputStream output=null;
-	private ConnectionBean connectionBean=null;
-	private Socket socket=null;
-	private ServerUserThread serverUserThread=null;
+	private ArrayList<ServerUserThread> users = null;
+	private Queue queue = null;
+	private ObjectInputStream input = null;
+	private ObjectOutputStream output = null;
+	private ConnectionBean connectionBean = null;
+	private Socket socket = null;
+	private ServerUserThread serverUserThread = null;
+
 	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue) {
 		this.users = users;
 		this.socket = socket;
-		this.queue=queue;
+		this.queue = queue;
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
@@ -51,8 +52,10 @@ public class ServerConnectionThread extends Thread {
 			} else if (connectionBean.getType() == ConnectionType.CREATE_ACCOUNT) {
 				user = createAccount();
 			}
-			synchronized(queue){
-				serverUserThread = new ServerUserThread(user, queue);
+			if (user != null) {
+				synchronized (queue) {
+					serverUserThread = new ServerUserThread(user, queue);
+				}
 			}
 			serverUserThread.start();
 			synchronized (users) {
@@ -101,7 +104,6 @@ public class ServerConnectionThread extends Thread {
 		}
 	}
 
-	
 	/**
 	 * <p>
 	 * Créer un compte sur la base de donnee

@@ -21,29 +21,29 @@ public class Game extends Thread {
 	}
 
 	public void run() {
-		while (!isInterrupted() && !end) {
+		//while (!isInterrupted() && !end) {
 			numRound++;
 			randomRoles();
 
 			sendInfos();
 
-			send(GameMessageType.YOUR_TURN, getInnocents());
+			//send(GameMessageType.YOUR_TURN, getInnocents());
 
-			recieve(getInnocents());
+			//recieve(getInnocents());
 
-			send(GameMessageType.YOUR_TURN, getWolf());
+			//send(GameMessageType.YOUR_TURN, getWolf());
 
-			recieve(getWolf());
+			//recieve(getWolf());
 
-			doGame();
-
+			//doGame();
+/*
 			if (checkWin() != -1) {
 				// SEND GEND
 				end = true;
 			} else {
 				// SEND CONTINUE
 			}
-		}
+		}*/
 	}
 
 	private void recieve(int position) {

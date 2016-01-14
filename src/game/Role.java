@@ -1,6 +1,8 @@
 package game;
 
-public abstract class Role {
+import java.io.Serializable;
+
+public abstract class Role implements Serializable{
 	private String name;
 	
 	public Role(String name) {

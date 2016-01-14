@@ -101,10 +101,10 @@ public class ClientConsole {
 			}
 		}
 
-		while (true) {
+		//while (true) {
 			Player[] players = (Player[]) client.recieve();
 			System.out.println(client.startRound(players));
-		}
+		//}
 
 	}
 }

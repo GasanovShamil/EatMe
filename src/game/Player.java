@@ -1,6 +1,8 @@
 package game;
 
-public class Player {
+import java.io.Serializable;
+
+public class Player implements Serializable {
 	private User user;
 	private Role role;
 	private int position;

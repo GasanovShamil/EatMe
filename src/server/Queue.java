@@ -46,6 +46,7 @@ public class Queue {
 		users.add(user);
 		test(numberOfPlayers, users);
 	}
+	
 
 	private void test(int numberOfPlayers, ArrayList<User> users) {
 		if (users.size() == numberOfPlayers) {

@@ -17,33 +17,29 @@ public class Game extends Thread {
 		loser = -1;
 		end = false;
 
-		//randomRoles();
+		// randomRoles();
 	}
 
 	public void run() {
-		//while (!isInterrupted() && !end) {
-			numRound++;
-			randomRoles();
-			System.out.println(players.length);
-			sendInfos();
+		// while (!isInterrupted() && !end) {
+		numRound++;
+		randomRoles();
+		System.out.println(players.length);
+		sendInfos();
 
-			//send(GameMessageType.YOUR_TURN, getInnocents());
+		// send(GameMessageType.YOUR_TURN, getInnocents());
 
-			//recieve(getInnocents());
+		// recieve(getInnocents());
 
-			//send(GameMessageType.YOUR_TURN, getWolf());
+		// send(GameMessageType.YOUR_TURN, getWolf());
 
-			//recieve(getWolf());
+		// recieve(getWolf());
 
-			//doGame();
-/*
-			if (checkWin() != -1) {
-				// SEND GEND
-				end = true;
-			} else {
-				// SEND CONTINUE
-			}
-		}*/
+		// doGame();
+		/*
+		 * if (checkWin() != -1) { // SEND GEND end = true; } else { // SEND
+		 * CONTINUE } }
+		 */
 	}
 
 	private void recieve(int position) {
@@ -134,12 +130,12 @@ public class Game extends Thread {
 				} else if (exAequos.contains(target)) {
 					check = target;
 				} else {
-					int cpt = wolf +1;
-					while (cpt <= wolf + players.length && !exAequos.contains(cpt%players.length)){
+					int cpt = wolf + 1;
+					while (cpt <= wolf + players.length && !exAequos.contains(cpt % players.length)) {
 						cpt++;
 					}
-					
-					check = cpt%players.length;
+
+					check = cpt % players.length;
 				}
 			}
 		}
@@ -150,7 +146,7 @@ public class Game extends Thread {
 	private void randomRoles() {
 		int size = players.length;
 		ArrayList<Role> roles = new ArrayList<Role>();
-		//Random random = new Random();
+		// Random random = new Random();
 		int cpt = 0;
 
 		if (size >= 3) {
@@ -172,17 +168,34 @@ public class Game extends Thread {
 		}
 
 		while (roles.size() > 0) {
-			//int rand = random.nextInt(roles.size());
-			int rand=(int)(Math.random()*roles.size());
+			// int rand = random.nextInt(roles.size());
+			int rand = (int) (Math.random() * roles.size());
 			Role role = roles.get(rand);
 			players[cpt++].setRole(role);
 			System.out.println(role);
-			System.out.println(players[cpt-1].getUser().getUsername());
+			System.out.println(players[cpt - 1].getUser().getUsername());
 			roles.remove(role);
 		}
 	}
 
 	private void doGame() {
+		int wolf = getWolf();
+		int target = ((Wolf) (players[wolf].getRole())).getTarget().getPosition();
 
+		if (((Innocent) players[target].getRole()).isTrap()) {
+			players[target].addPoints();
+			players[wolf].removePoints();
+		} else {
+			players[target].removePoints();
+			players[wolf].addPoints();
+		}
+
+		for (int i = 0; i < players.length; i++) {
+			if (i != wolf && i != target) {
+				if (!((Innocent) players[i].getRole()).isTrap()) {
+					players[i].addPoints();
+				}
+			}
+		}
 	}
 }

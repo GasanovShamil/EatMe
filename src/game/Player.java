@@ -43,7 +43,7 @@ public class Player implements Serializable {
 		points -= calcPoints();
 	}
 
-	private int calcPoints() {
+	public int calcPoints() {
 		return (role instanceof Innocent) ? ((Innocent) role).getValue()
 				: ((Innocent) ((Wolf) role).getTarget().role).getValue();
 	}

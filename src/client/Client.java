@@ -83,15 +83,15 @@ public class Client {
 		Role me = players[position].getRole();
 
 		if (me.isWolf()) {
-			((Wolf)(me)).bite(players[Integer.parseInt(choix)]);
+			((Wolf) (me)).bite(players[Integer.parseInt(choix)]);
 		} else {
 			switch (choix) {
 			case "1":
-				((Innocent)(me)).sleep();
+				((Innocent) (me)).sleep();
 				action = "Vous dormez.";
 				break;
 			case "2":
-				((Innocent)(me)).putTrap();
+				((Innocent) (me)).putTrap();
 				action = "Vous posez un piège.";
 				break;
 			default:
@@ -100,16 +100,14 @@ public class Client {
 			}
 		}
 		
+		players[position].send(players[position]);
+
 		return action;
 	}
 
-	/*
-	 * private void getMyPosition(){ int cpt=0;
-	 * 
-	 * while(cpt<players.length &&
-	 * players[cpt].getUser().getUsername().equals(username)){ cpt++; }
-	 * position=cpt; }
-	 */
+	public int getRoundPoints() {
+		return players[position].calcPoints();
+	}
 
 	public String getUsername() {
 		return username;
@@ -125,10 +123,8 @@ public class Client {
 			Thread.sleep(1000);
 			output.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

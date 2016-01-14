@@ -4,8 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import enums.ConnectionType;
-import enums.StartGameType;
+import enums.*;
 import game.Player;
 
 public class ClientConsole {
@@ -104,15 +103,47 @@ public class ClientConsole {
 				break;
 			}
 		}
-		
-		System.out.println("En attente d'une partie ...");
 
-		//while (true) {
+		System.out.println("En attente d'une partie ...");
+		flag = false;
+
+		while (!flag) {
 			Player[] players = (Player[]) client.recieve();
 			System.out.println(client.startRound(players));
 			System.out.print("Votre choix : ");
 			String choix = keyboard.readLine();
-		//}
+			System.out.println(client.doAction(choix));
 
+			GameMessageType message = (GameMessageType) client.recieve();
+
+			switch (message) {
+			case GAME_END_LOSER:
+				System.out.println("LOSER");
+				flag = true;
+				break;
+
+			case GAME_END_WINNER:
+				System.out.println("WINNER");
+				flag = true;
+				break;
+
+			case ROUND_END_LOSER:
+				System.out.println(client.getRoundPoints());
+				System.out.println("ATTRIB ROLE !");
+				break;
+
+			case ROUND_END_NEUTRAL:
+				System.out.println("0 pts");
+				break;
+
+			case ROUND_END_WINNER:
+				System.out.println("+" + client.getRoundPoints());
+				break;
+
+			default:
+				System.out.println("NE ZA CHTO");
+				break;
+			}
+		}
 	}
 }

@@ -17,7 +17,7 @@ public class Game extends Thread {
 		loser = -1;
 		end = false;
 
-		randomRoles();
+		//randomRoles();
 	}
 
 	public void run() {
@@ -177,7 +177,7 @@ public class Game extends Thread {
 			Role role = roles.get(rand);
 			players[cpt++].setRole(role);
 			System.out.println(role);
-			System.out.println(players.length);
+			System.out.println(players[cpt-1].getUser().getUsername());
 			roles.remove(role);
 		}
 	}

@@ -44,7 +44,7 @@ public class Client {
 	public String startRound(Player[] players) {
 		this.players = players;
 		int cpt = 0;
-		while (cpt < players.length && players[cpt].getUser().getUsername().equals(username)) {
+		while (cpt < players.length && !players[cpt].getUser().getUsername().equals(username)) {
 			cpt++;
 		}
 		position = cpt;
@@ -58,10 +58,10 @@ public class Client {
 
 		if (me.getRole().isWolf()) {
 			options += "\nMordre :";
-			for (Player player : players) {
-				if (!player.equals(me)) {
-					options += "\n" + player.getPosition() + "/ " + player.getUser().getUsername() + " ("
-							+ player.getRole().getName() + ")";
+			for (int i=0; i< players.length; i++){
+				if (!players[i].equals(me)) {
+					options += "\n" + players[i].getPosition() + "/ " + players[i].getUser().getUsername() + " ("
+							+ players[i].getRole().getName() + ")";
 				}
 			}
 		} else {

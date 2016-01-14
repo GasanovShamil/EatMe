@@ -21,7 +21,7 @@ public class ClientConsole {
 		boolean test = false;
 
 		while (!flag) {
-			if (!test) {
+			if (test) {
 				// port = 9443
 				System.out.print("Entrez l'adresse du serveur : ");
 				String serverAdress = keyboard.readLine();
@@ -57,7 +57,11 @@ public class ClientConsole {
 				client.connect(type);
 				flag = client.isConnected();
 			} else {
-				client = new Client("localhost", 9443, "leo", "leo");
+				System.out.print("\nEntrez votre username : ");
+				String username = keyboard.readLine();
+				System.out.print("Entrez votre mot de passe : ");
+				String password = keyboard.readLine();
+				client = new Client("localhost", 9443, username, password);
 				System.out.println(client.connect(ConnectionType.AUTHENTICATE));
 				flag = client.isConnected();
 			}

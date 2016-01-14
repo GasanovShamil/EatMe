@@ -18,10 +18,10 @@ public class ClientConsole {
 
 		Client client = null;
 		boolean flag = false;
-		boolean test = false;
+		boolean test = true;
 
 		while (!flag) {
-			if (test) {
+			if (!test) {
 				// port = 9443
 				System.out.print("Entrez l'adresse du serveur : ");
 				String serverAdress = keyboard.readLine();
@@ -104,10 +104,14 @@ public class ClientConsole {
 				break;
 			}
 		}
+		
+		System.out.println("En attente d'une partie ...");
 
 		//while (true) {
 			Player[] players = (Player[]) client.recieve();
 			System.out.println(client.startRound(players));
+			System.out.print("Votre choix : ");
+			String choix = keyboard.readLine();
 		//}
 
 	}

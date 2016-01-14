@@ -7,15 +7,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import enums.ConnectionType;
-import game.Player;
-import game.User;
+import game.*;
 
 public class Client {
 	private Socket socket;
 	ObjectOutputStream output;
 	ObjectInputStream input;
-	private String serverAdress;
-	private int serverPort;
 	private String username;
 	private String password;
 	private Integer userID;
@@ -33,8 +30,6 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.serverAdress = serverAdress;
-		this.serverPort = serverPort;
 		this.username = username;
 		this.password = password;
 		userID = 0;
@@ -48,8 +43,19 @@ public class Client {
 			cpt++;
 		}
 		position = cpt;
-		
-		return options();
+
+		return infos() + options();
+	}
+
+	public String infos() {
+		String infos = "";
+
+		for (Player player : players) {
+			infos += player.getUser().getUsername() + " " + player.getPosition() + " " + player.getRole().getName()
+					+ " " + player.getPoints() + "\n";
+		}
+
+		return infos;
 	}
 
 	private String options() {
@@ -58,7 +64,7 @@ public class Client {
 
 		if (me.getRole().isWolf()) {
 			options += "\nMordre :";
-			for (int i=0; i< players.length; i++){
+			for (int i = 0; i < players.length; i++) {
 				if (!players[i].equals(me)) {
 					options += "\n" + players[i].getPosition() + "/ " + players[i].getUser().getUsername() + " ("
 							+ players[i].getRole().getName() + ")";
@@ -70,6 +76,31 @@ public class Client {
 		}
 
 		return options;
+	}
+
+	public String doAction(String choix) {
+		String action = "";
+		Role me = players[position].getRole();
+
+		if (me.isWolf()) {
+			((Wolf)(me)).bite(players[Integer.parseInt(choix)]);
+		} else {
+			switch (choix) {
+			case "1":
+				((Innocent)(me)).sleep();
+				action = "Vous dormez.";
+				break;
+			case "2":
+				((Innocent)(me)).putTrap();
+				action = "Vous posez un piège.";
+				break;
+			default:
+				action = "NEIN.";
+				break;
+			}
+		}
+		
+		return action;
 	}
 
 	/*

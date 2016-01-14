@@ -18,11 +18,11 @@ public abstract class Innocent extends Role {
 		return trap;
 	}
 
-	public void Sleep() {
+	public void sleep() {
 		trap = false;
 	}
 
-	public void PutTrap() {
+	public void putTrap() {
 		trap = true;
 	}
 	

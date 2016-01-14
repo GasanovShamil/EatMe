@@ -14,4 +14,8 @@ public abstract class Role implements Serializable{
 	}
 	
 	public abstract boolean isWolf();
+	
+	public String toString(){
+		return name;
+	}
 }

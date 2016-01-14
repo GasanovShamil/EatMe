@@ -24,7 +24,7 @@ public class Game extends Thread {
 		//while (!isInterrupted() && !end) {
 			numRound++;
 			randomRoles();
-
+			System.out.println(players.length);
 			sendInfos();
 
 			//send(GameMessageType.YOUR_TURN, getInnocents());
@@ -150,7 +150,7 @@ public class Game extends Thread {
 	private void randomRoles() {
 		int size = players.length;
 		ArrayList<Role> roles = new ArrayList<Role>();
-		Random random = new Random();
+		//Random random = new Random();
 		int cpt = 0;
 
 		if (size >= 3) {
@@ -172,9 +172,12 @@ public class Game extends Thread {
 		}
 
 		while (roles.size() > 0) {
-			int rand = random.nextInt(roles.size());
+			//int rand = random.nextInt(roles.size());
+			int rand=(int)(Math.random()*roles.size());
 			Role role = roles.get(rand);
 			players[cpt++].setRole(role);
+			System.out.println(role);
+			System.out.println(players.length);
 			roles.remove(role);
 		}
 	}

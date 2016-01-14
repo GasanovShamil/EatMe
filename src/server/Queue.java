@@ -2,6 +2,7 @@ package server;
 
 import java.util.ArrayList;
 
+import game.Game;
 import game.Player;
 import game.User;
 
@@ -52,9 +53,9 @@ public class Queue {
 			for (int i = 0; i < players.length; i++) {
 				players[i] = new Player(users.get(i), i);
 			}
-			System.out.println("aaaaaaaaaaaaaaaaaaight sussu mgl rpz tmtc");
-			// Game game = new Game(players);
-			// game.start();
+			System.out.println("New Game");
+			Game game = new Game(players);
+			game.start();
 			users = new ArrayList<User>();
 		}
 	}

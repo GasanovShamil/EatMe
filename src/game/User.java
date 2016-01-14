@@ -9,8 +9,8 @@ import java.net.Socket;
 public class User implements Serializable {
 	private String username;
 	private transient Socket socket;
-	private ObjectInputStream input;
-	private ObjectOutputStream output;
+	private transient ObjectInputStream input;
+	private transient ObjectOutputStream output;
 
 	public User(String username, Socket socket, ObjectInputStream input, ObjectOutputStream output) {
 		this.username = username;

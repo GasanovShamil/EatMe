@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import enums.ConnectionType;
 import enums.StartGameType;
+import game.Player;
 
 public class ClientConsole {
 	public static void main(String[] args) throws IOException {
@@ -57,7 +58,7 @@ public class ClientConsole {
 				flag = client.isConnected();
 			} else {
 				client = new Client("localhost", 9443, "leo", "leo");
-				client.connect(ConnectionType.AUTHENTICATE);
+				System.out.println(client.connect(ConnectionType.AUTHENTICATE));
 				flag = client.isConnected();
 			}
 		}
@@ -99,5 +100,11 @@ public class ClientConsole {
 				break;
 			}
 		}
+
+		while (true) {
+			Player[] players = (Player[]) client.recieve();
+			System.out.println(client.startRound(players));
+		}
+
 	}
 }

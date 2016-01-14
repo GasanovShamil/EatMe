@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import enums.ConnectionType;
+import game.Player;
 import game.User;
 
 public class Client {
@@ -19,12 +20,14 @@ public class Client {
 	private String password;
 	private Integer userID;
 	private boolean connected;
+	private Player[] players;
+	private int position;
 
 	public Client(String serverAdress, int serverPort, String username, String password) {
 		try {
 			socket = new Socket(serverAdress, serverPort);
 			output = new ObjectOutputStream(socket.getOutputStream());
-			
+
 			input = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -37,21 +40,59 @@ public class Client {
 		userID = 0;
 		connected = false;
 	}
-	
-	public String getUsername(){
+
+	public String startRound(Player[] players) {
+		this.players = players;
+		int cpt = 0;
+		while (cpt < players.length && players[cpt].getUser().getUsername().equals(username)) {
+			cpt++;
+		}
+		position = cpt;
+		
+		return options();
+	}
+
+	private String options() {
+		String options = "";
+		Player me = players[position];
+
+		if (me.getRole().isWolf()) {
+			options += "\nMordre :";
+			for (Player player : players) {
+				if (!player.equals(me)) {
+					options += "\n" + player.getPosition() + "/ " + player.getUser().getUsername() + " ("
+							+ player.getRole().getName() + ")";
+				}
+			}
+		} else {
+			options += "\n1/ Je dors";
+			options += "\n2/ Je pose un piège";
+		}
+
+		return options;
+	}
+
+	/*
+	 * private void getMyPosition(){ int cpt=0;
+	 * 
+	 * while(cpt<players.length &&
+	 * players[cpt].getUser().getUsername().equals(username)){ cpt++; }
+	 * position=cpt; }
+	 */
+
+	public String getUsername() {
 		return username;
 	}
-	
-	public boolean isConnected(){
+
+	public boolean isConnected() {
 		return connected;
 	}
-	
-	public void send(Object obj){
+
+	public void send(Object obj) {
 		try {
 			output.writeObject(obj);
 			Thread.sleep(1000);
 			output.flush();
-			System.out.println("j'envoie le message");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,34 +100,41 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-	}
-	
-	public Object recieve(){
-		try {
-			return input.readObject();
-			
-		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+
 	}
 
-	public void connect(ConnectionType type) {
+	public Object recieve() {
+		Object result = null;
+
+		try {
+			result = input.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+	public String connect(ConnectionType type) {
+		String result = "";
+
 		try {
 			send(new ConnectionBean(type, username, password));
 			userID = (Integer) recieve();
 
 			if (userID > 0) {
-				System.out.println("Vous êtes connecté sur le serveur.");
 				connected = true;
+				result = "Vous êtes connecté sur le serveur.";
 			} else {
-				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
 				connected = false;
+				result = "Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			connected = false;
+			result = "Un problème est survenu lors de votre tentative de connexion, réessayer plus tard.";
 		}
+
+		return result;
 	}
 }

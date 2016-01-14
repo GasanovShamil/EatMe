@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import enums.ConnectionType;
 import game.User;
 
 public class Client {

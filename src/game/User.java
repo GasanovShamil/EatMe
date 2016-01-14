@@ -8,7 +8,7 @@ import java.net.Socket;
 
 public class User implements Serializable {
 	private String username;
-	private Socket socket;
+	private transient Socket socket;
 	private ObjectInputStream input;
 	private ObjectOutputStream output;
 
@@ -23,9 +23,9 @@ public class User implements Serializable {
 		return username;
 	}
 
-	public void send(Object obj) {
+	public void send(Object message) {
 		try {
-			output.writeObject(obj);
+			output.writeObject(message);
 			Thread.sleep(1000);
 			output.flush();
 		} catch (IOException e) {

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import client.ConnectionBean;
-import client.ConnectionType;
+import enums.ConnectionType;
 import game.User;
 
 public class ServerConnectionThread extends Thread {
@@ -84,7 +84,6 @@ public class ServerConnectionThread extends Thread {
 			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
 			try {
-
 				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
 				output.flush();
 			} catch (IOException e) {

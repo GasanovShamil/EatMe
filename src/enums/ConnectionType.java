@@ -1,4 +1,4 @@
-package client;
+package enums;
 
 public enum ConnectionType {
 	AUTHENTICATE,

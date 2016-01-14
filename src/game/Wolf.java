@@ -15,4 +15,8 @@ public class Wolf extends Role {
 	public void bite(Player target) {
 		this.target = target;
 	}
+	
+	public boolean isWolf(){
+		return true;
+	}
 }

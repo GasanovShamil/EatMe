@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import enums.ConnectionType;
+import enums.StartGameType;
+
 public class ClientConsole {
 	public static void main(String[] args) throws IOException {
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -69,22 +72,22 @@ public class ClientConsole {
 			String choix = keyboard.readLine();
 			switch (choix) {
 			case "1":
-				client.send(Message.START_3P);
+				client.send(StartGameType.START_3P);
 				flag = true;
 				break;
 
 			case "2":
-				client.send(Message.START_4P);
+				client.send(StartGameType.START_4P);
 				flag = true;
 				break;
 
 			case "3":
-				client.send(Message.START_5P);
+				client.send(StartGameType.START_5P);
 				flag = true;
 				break;
 
 			case "4":
-				client.send(Message.START_6P);
+				client.send(StartGameType.START_6P);
 				flag = true;
 				break;
 

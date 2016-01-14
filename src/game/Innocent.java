@@ -25,6 +25,10 @@ public abstract class Innocent extends Role {
 	public void PutTrap() {
 		trap = true;
 	}
+	
+	public boolean isWolf(){
+		return false;
+	}
 }
 
 class Pig extends Innocent {

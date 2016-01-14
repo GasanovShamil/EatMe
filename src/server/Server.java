@@ -20,9 +20,9 @@ public class Server {
 		setConf();
 		users = new ArrayList<ServerUserThread>();
 		queue = new Queue();
-		InetAddress addr=InetAddress.getLocalHost();
+		InetAddress addr = InetAddress.getLocalHost();
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue);
-		System.out.println("Server started at port N:" + conf.getPort()+ " IP : "+addr.getHostAddress());
+		System.out.println("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		while (!flag) {
@@ -45,7 +45,7 @@ public class Server {
 	 * du serveur.
 	 * </p>
 	 * 
-	 * @return ConfigurationBean- object pour configurer le serveur
+	 * @return ConfigurationBean - object pour configurer le serveur
 	 */
 	private static void setConf() {
 		int port = 0;

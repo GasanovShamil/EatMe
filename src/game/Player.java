@@ -3,14 +3,14 @@ package game;
 public class Player {
 	private User user;
 	private Role role;
-	private int points;
 	private int position;
+	private int points;
 
 	public Player(User user, int position) {
 		this.user = user;
 		role = null;
-		points = 0;
 		this.position = position;
+		points = 0;
 	}
 
 	public User getUser() {
@@ -23,6 +23,14 @@ public class Player {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+	
+	public int getPosition(){
+		return position;
+	}
+	
+	public int getPoints(){
+		return points;
 	}
 
 	public void addPoints() {
@@ -37,7 +45,19 @@ public class Player {
 		return (role instanceof Innocent) ? ((Innocent) role).getValue()
 				: ((Innocent) ((Wolf) role).getTarget().role).getValue();
 	}
+	
+	private int calcPointsTMP(){
+		return 0;
+	}
+	
+	public void send(Object message){
+		user.send(message);
+	}
 
+	public Object recieve(){
+		return user.recieve();
+	}
+	
 	public void chooseRoles() {
 		// TODO Auto-generated method stub
 

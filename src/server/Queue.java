@@ -53,7 +53,7 @@ public class Queue {
 				players[i] = new Player(users.get(i), i);
 			}
 			System.out.println("aaaaaaaaaaaaaaaaaaight sussu mgl rpz tmtc");
-			// Game game = new Game();
+			// Game game = new Game(players);
 			// game.start();
 			users = new ArrayList<User>();
 		}

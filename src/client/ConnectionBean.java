@@ -2,6 +2,7 @@ package client;
 import java.io.Serializable;
 
 import client.ConnectionBean;
+import enums.ConnectionType;
 
 public class ConnectionBean implements Serializable{
 	

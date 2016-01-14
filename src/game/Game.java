@@ -26,7 +26,11 @@ public class Game extends Thread {
 		randomRoles();
 		System.out.println(players.length);
 		sendInfos();
-
+		recieveAll();
+		doGame();
+			
+		}
+		
 		// send(GameMessageType.YOUR_TURN, getInnocents());
 
 		// recieve(getInnocents());
@@ -40,8 +44,14 @@ public class Game extends Thread {
 		 * if (checkWin() != -1) { // SEND GEND end = true; } else { // SEND
 		 * CONTINUE } }
 		 */
-	}
+	
 
+	private void recieveAll() {
+		for(int i=0; i<players.length; i++){
+			players[i] = (Player) players[i].recieve();
+		}
+	}
+	
 	private void recieve(int position) {
 		players[position] = (Player) players[position].recieve();
 	}
@@ -185,9 +195,11 @@ public class Game extends Thread {
 		if (((Innocent) players[target].getRole()).isTrap()) {
 			players[target].addPoints();
 			players[wolf].removePoints();
+			loser=wolf;
 		} else {
 			players[target].removePoints();
 			players[wolf].addPoints();
+			loser=target;
 		}
 
 		for (int i = 0; i < players.length; i++) {

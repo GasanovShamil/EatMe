@@ -41,6 +41,7 @@ public class Player implements Serializable {
 
 	public void removePoints() {
 		points -= calcPoints();
+		points = (points < 0) ? 0 : points;
 	}
 
 	public int calcPoints() {

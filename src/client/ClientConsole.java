@@ -30,18 +30,18 @@ public class ClientConsole {
 				System.out.print("Entrez le port du serveur : ");
 				String serverPort = keyboard.readLine();
 
-				ConnectionType type = null;
+				ConnectionMessageType type = null;
 
 				while (type == null) {
 					System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\nVotre choix : ");
 					String choix = keyboard.readLine();
 					switch (choix) {
 					case "1":
-						type = ConnectionType.CREATE_ACCOUNT;
+						type = ConnectionMessageType.CREATE_ACCOUNT;
 						break;
 
 					case "2":
-						type = ConnectionType.AUTHENTICATE;
+						type = ConnectionMessageType.AUTHENTICATE;
 						break;
 
 					default:
@@ -64,7 +64,7 @@ public class ClientConsole {
 				System.out.print("Entrez votre mot de passe : ");
 				String password = keyboard.readLine();
 				client = new Client("localhost", 9443, username, password);
-				System.out.println(client.connect(ConnectionType.AUTHENTICATE));
+				System.out.println(client.connect(ConnectionMessageType.AUTHENTICATE));
 				flag = client.isConnected();
 			}
 		}

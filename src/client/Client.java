@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-import enums.ConnectionType;
+import enums.ConnectionMessageType;
 import game.*;
 
 public class Client {
@@ -143,7 +143,7 @@ public class Client {
 		return result;
 	}
 
-	public String connect(ConnectionType type) {
+	public String connect(ConnectionMessageType type) {
 		String result = "";
 
 		try {

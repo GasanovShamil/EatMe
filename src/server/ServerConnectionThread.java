@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import client.ConnectionBean;
-import enums.ConnectionType;
+import enums.ConnectionMessageType;
 import game.User;
 
 public class ServerConnectionThread extends Thread {
@@ -47,9 +47,9 @@ public class ServerConnectionThread extends Thread {
 			prop.put("password", "root");
 			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
 			User user = null;
-			if (connectionBean.getType() == ConnectionType.AUTHENTICATE) {
+			if (connectionBean.getType() == ConnectionMessageType.AUTHENTICATE) {
 				user = authenticate();
-			} else if (connectionBean.getType() == ConnectionType.CREATE_ACCOUNT) {
+			} else if (connectionBean.getType() == ConnectionMessageType.CREATE_ACCOUNT) {
 				user = createAccount();
 			}
 			if (user != null) {

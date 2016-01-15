@@ -48,7 +48,14 @@ public class Queue {
 	}
 	
 
+	
 	private void test(int numberOfPlayers, ArrayList<User> users) {
+		for (int i=0; i<users.size(); i++){
+			User user=null;
+			if(users.get(i).isDeconnected()){
+				users.remove(i);
+			}
+		}
 		if (users.size() == numberOfPlayers) {
 			Player[] players = new Player[numberOfPlayers];
 			for (int i = 0; i < players.length; i++) {

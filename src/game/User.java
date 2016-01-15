@@ -23,6 +23,10 @@ public class User implements Serializable {
 		return username;
 	}
 
+	public boolean isDeconnected(){
+		return socket.isInputShutdown() || socket.isOutputShutdown() || socket.isClosed();
+	}
+	
 	public void send(Object message) {
 		try {
 			output.writeObject(message);

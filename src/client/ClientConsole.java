@@ -19,6 +19,7 @@ public class ClientConsole {
 
 		Client client = null;
 		boolean flag = false;
+		boolean inGame = false;
 		boolean test = false;
 
 		while (!flag) {
@@ -79,87 +80,89 @@ public class ClientConsole {
 			switch (choix) {
 			case "1":
 				client.send(StartGameType.START_3P);
-				flag = true;
+				inGame = true;
 				break;
 
 			case "2":
 				client.send(StartGameType.START_4P);
-				flag = true;
+				inGame = true;
 				break;
 
 			case "3":
 				client.send(StartGameType.START_5P);
-				flag = true;
+				inGame = true;
 				break;
 
 			case "4":
 				client.send(StartGameType.START_6P);
-				flag = true;
+				inGame = true;
 				break;
 
 			case "999":
+				flag = true;
 				break;
 
 			default:
 				System.out.println("Saisie incorrecte.");
 				break;
 			}
-		}
 
-		System.out.println("En attente d'une partie ...");
-		flag = false;
+			if (inGame) {
+				System.out.println("En attente d'une partie ...");
+			}
 
-		while (!flag) {
-			Player[] players = (Player[]) client.recieve();
-			System.out.println(client.startRound(players));
-			System.out.print("Votre choix : ");
-			System.out.println(client.doAction(keyboard.readLine()));
+			while (inGame) {
+				Player[] players = (Player[]) client.recieve();
+				System.out.println(client.startRound(players));
+				System.out.print("Votre choix : ");
+				System.out.println(client.doAction(keyboard.readLine()));
 
-			GameMessageType message = (GameMessageType) client.recieve();
+				GameMessageType message = (GameMessageType) client.recieve();
 
-			switch (message) {
-			case GAME_END_LOSER:
-				System.out.println("LOSER");
-				flag = true;
-				break;
+				switch (message) {
+				case GAME_END_LOSER:
+					System.out.println("LOSER");
+					inGame = false;
+					break;
 
-			case GAME_END_WINNER:
-				System.out.println("WINNER");
-				flag = true;
-				break;
+				case GAME_END_WINNER:
+					System.out.println("WINNER");
+					inGame = false;
+					break;
 
-			case ROUND_END_LOSER:
-				System.out.println("-" + client.getRoundPoints());
-				System.out.println("ATTRIB ROLE !");
+				case ROUND_END_LOSER:
+					System.out.println("-" + client.getRoundPoints());
+					System.out.println("ATTRIB ROLE !");
 
-				ArrayList<Role> listRoles = Role.generateRoles(players.length);
-				Role[] roles = new Role[players.length];
+					ArrayList<Role> listRoles = Role.generateRoles(players.length);
+					Role[] roles = new Role[players.length];
 
-				for (int i = 0; i < players.length - 1; i++) {
-					System.out.println("Role de : " + players[i].getUsername() + " ?");
-					for (int j = 0; j < listRoles.size(); j++) {
-						System.out.println(j + "/ " + listRoles.get(j).getName());
+					for (int i = 0; i < players.length - 1; i++) {
+						System.out.println("Role de : " + players[i].getUsername() + " ?");
+						for (int j = 0; j < listRoles.size(); j++) {
+							System.out.println(j + "/ " + listRoles.get(j).getName());
+						}
+						System.out.print("Votre choix : ");
+						Role role = listRoles.get(Integer.parseInt(keyboard.readLine()));
+						roles[i] = role;
+						listRoles.remove(role);
 					}
-					System.out.print("Votre choix : ");
-					Role role = listRoles.get(Integer.parseInt(keyboard.readLine()));
-					roles[i] = role;
-					listRoles.remove(role);
+					roles[roles.length - 1] = listRoles.get(0);
+					client.send(roles);
+					break;
+
+				case ROUND_END_NEUTRAL:
+					System.out.println("0 pts");
+					break;
+
+				case ROUND_END_WINNER:
+					System.out.println("+" + client.getRoundPoints());
+					break;
+
+				default:
+					System.out.println("NE ZA CHTO");
+					break;
 				}
-				roles[roles.length - 1] = listRoles.get(0);
-				client.send(roles);
-				break;
-
-			case ROUND_END_NEUTRAL:
-				System.out.println("0 pts");
-				break;
-
-			case ROUND_END_WINNER:
-				System.out.println("+" + client.getRoundPoints());
-				break;
-
-			default:
-				System.out.println("NE ZA CHTO");
-				break;
 			}
 		}
 	}

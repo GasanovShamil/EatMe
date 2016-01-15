@@ -12,7 +12,6 @@ public class Game extends Thread {
 	private ArrayList<Integer> roundNeutrals;
 	private ArrayList<Integer> gameLosers;
 	private int roundLoser;
-	
 
 	public Game(Player[] players) {
 		this.players = players;

@@ -21,17 +21,7 @@ public class Client {
 	private Player[] players;
 	private int position;
 
-	public Client(String serverAdress, int serverPort, String username, String password) {
-		try {
-			socket = new Socket(serverAdress, serverPort);
-			output = new ObjectOutputStream(socket.getOutputStream());
-
-			input = new ObjectInputStream(socket.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		this.username = username;
-		this.password = password;
+	public Client() {
 		msg = ConnectionMessageType.DEFAULT;
 		connected = false;
 	}
@@ -51,8 +41,8 @@ public class Client {
 		String infos = "";
 
 		for (Player player : players) {
-			infos += player.getUsername() + " " + player.getPosition() + " " + player.getRole().getName()
-					+ " " + player.getPoints() + "\n";
+			infos += player.getUsername() + " " + player.getPosition() + " " + player.getRole().getName() + " "
+					+ player.getPoints() + "\n";
 		}
 
 		return infos;
@@ -99,7 +89,7 @@ public class Client {
 				break;
 			}
 		}
-		
+
 		send(players[position].getRole());
 
 		return action;
@@ -142,7 +132,21 @@ public class Client {
 		return result;
 	}
 
-	public String connect(ConnectionMessageType type) {
+	public boolean setConnection(String serverAdress, int serverPort) {
+		boolean flag = false;
+		try {
+			socket = new Socket(serverAdress, serverPort);
+			if (flag = socket.isConnected()) {
+				output = new ObjectOutputStream(socket.getOutputStream());
+				input = new ObjectInputStream(socket.getInputStream());
+			}
+		} catch (IOException e) {
+			flag=false;
+		}
+		return flag;
+	}
+
+	public String connect(ConnectionMessageType type, String username, String password) {
 		String result = "";
 
 		try {
@@ -151,13 +155,15 @@ public class Client {
 
 			if (msg == ConnectionMessageType.SUCCESS) {
 				connected = true;
+				this.username = username;
+				this.password = password;
 				result = "Vous êtes connecté sur le serveur.";
-			} else if(msg == ConnectionMessageType.FAIL) {
+			} else if (msg == ConnectionMessageType.FAIL) {
 				connected = false;
 				result = "Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.";
-			}else if(msg == ConnectionMessageType.EXIST) {
+			} else if (msg == ConnectionMessageType.EXIST) {
 				connected = false;
-				result = "L'utilisateur \""+username+"\" existe deja";
+				result = "L'utilisateur \"" + username + "\" existe deja";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -21,18 +21,25 @@ public class ClientConsole {
 		boolean flag = false;
 		boolean inGame = false;
 		boolean test = false;
-
-		while (!flag) {
-			// port = 9443
+		client = new Client();
+		// port = 9443
+		do {
 			System.out.print("Entrez l'adresse du serveur : ");
 			String serverAdress = keyboard.readLine();
 			System.out.print("Entrez le port du serveur : ");
-			String serverPort = keyboard.readLine();
+			int serverPort = Integer.parseInt(keyboard.readLine());
+			flag = client.setConnection(serverAdress, serverPort);
+			if (!flag) {
+				System.out.println("Connection to server failed");
+			}
+		} while (!flag);
 
-			ConnectionMessageType type = null;
+		ConnectionMessageType type = null;
+		flag = false;
 
+		while (!flag) {
 			while (type == null) {
-				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" +"\n3/ Quiter"+ "\nVotre choix : ");
+				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\n3/ Quiter" + "\nVotre choix : ");
 				String choix = keyboard.readLine();
 				switch (choix) {
 				case "1":
@@ -55,8 +62,7 @@ public class ClientConsole {
 			System.out.print("Entrez votre mot de passe : ");
 			String password = keyboard.readLine();
 
-			client = new Client(serverAdress, Integer.parseInt(serverPort), username, password);
-			System.out.println(client.connect(type));
+			System.out.println(client.connect(type, username, password));
 			flag = client.isConnected();
 		}
 

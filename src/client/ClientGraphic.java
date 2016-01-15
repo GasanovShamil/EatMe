@@ -313,6 +313,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			}
 		});
 		pane.add(jbSubscribe);
+		
+		JButton jbCancel = new JButton("Retour");
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchMode(Mode.DEFAULT);
+			}
+		});
+		pane.add(jbCancel);
 
 		pane.add(getError());
 
@@ -366,6 +375,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			}
 		});
 		pane.add(jbConnect);
+		
+		JButton jbCancel = new JButton("Retour");
+		jbCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchMode(Mode.DEFAULT);
+			}
+		});
+		pane.add(jbCancel);
 
 		pane.add(getError());
 

@@ -8,58 +8,66 @@ import enums.GameMessageType;
 public class Game extends Thread {
 	private Player[] players;
 	private int numRound;
-	private int loser;
+	private ArrayList<Integer> roundWinners;
+	private ArrayList<Integer> roundNeutrals;
+	private ArrayList<Integer> gameLosers;
+	private int roundLoser;
 	private boolean end;
 
 	public Game(Player[] players) {
 		this.players = players;
 		numRound = 0;
-		loser = -1;
 		end = false;
 
-		// randomRoles();
+		randomRoles();
 	}
 
 	public void run() {
 		// while (!isInterrupted() && !end) {
+		roundWinners = new ArrayList<Integer>();
+		roundNeutrals = new ArrayList<Integer>();
+		roundLoser = -1;
 		numRound++;
-		randomRoles();
 		System.out.println(players.length);
 		sendInfos();
 		recieveAll();
 		doGame();
-			
+		int winner = checkWin();
+		if (winner != -1) {
+			send(GameMessageType.GAME_END_WINNER, winner);
+			send(GameMessageType.GAME_END_LOSER, gameLosers);
+		} else {
+			send(GameMessageType.ROUND_END_WINNER, roundWinners);
+			send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
+			send(GameMessageType.ROUND_END_LOSER, roundLoser);
+			setRoles((Role[])players[roundLoser].recieve());
 		}
-		
-		// send(GameMessageType.YOUR_TURN, getInnocents());
+	}
 
-		// recieve(getInnocents());
+	// send(GameMessageType.YOUR_TURN, getInnocents());
 
-		// send(GameMessageType.YOUR_TURN, getWolf());
+	// recieve(getInnocents());
 
-		// recieve(getWolf());
+	// send(GameMessageType.YOUR_TURN, getWolf());
 
-		// doGame();
-		/*
-		 * if (checkWin() != -1) { // SEND GEND end = true; } else { // SEND
-		 * CONTINUE } }
-		 */
+	// recieve(getWolf());
+
+	// doGame();
+	/*
+	 * if (checkWin() != -1) { // SEND GEND end = true; } else { // SEND
+	 * CONTINUE } }
+	 */
+
 	
-
+	
 	private void recieveAll() {
-		for(int i=0; i<players.length; i++){
+		for (int i = 0; i < players.length; i++) {
 			players[i] = (Player) players[i].recieve();
 		}
 	}
-	
+
 	private void recieve(int position) {
 		players[position] = (Player) players[position].recieve();
-	}
-
-	private void recieve(ArrayList<Integer> positions) {
-		for (int n : positions) {
-			players[n] = (Player) players[n].recieve();
-		}
 	}
 
 	private void send(Object message, int position) {
@@ -149,14 +157,19 @@ public class Game extends Thread {
 				}
 			}
 		}
-
+		if (check != -1) {
+			gameLosers = new ArrayList<Integer>();
+			for (int i = 0; i < players.length; i++) {
+				if (i != check)
+					gameLosers.add(i);
+			}
+		}
 		return check;
 	}
 
 	private void randomRoles() {
 		int size = players.length;
 		ArrayList<Role> roles = new ArrayList<Role>();
-		// Random random = new Random();
 		int cpt = 0;
 
 		if (size >= 3) {
@@ -178,9 +191,9 @@ public class Game extends Thread {
 		}
 
 		while (roles.size() > 0) {
-			// int rand = random.nextInt(roles.size());
 			int rand = (int) (Math.random() * roles.size());
 			Role role = roles.get(rand);
+
 			players[cpt++].setRole(role);
 			System.out.println(role);
 			System.out.println(players[cpt - 1].getUser().getUsername());
@@ -195,19 +208,30 @@ public class Game extends Thread {
 		if (((Innocent) players[target].getRole()).isTrap()) {
 			players[target].addPoints();
 			players[wolf].removePoints();
-			loser=wolf;
+			roundLoser = wolf;
+			roundWinners.add(target);
 		} else {
 			players[target].removePoints();
 			players[wolf].addPoints();
-			loser=target;
+			roundLoser = target;
+			roundWinners.add(wolf);
 		}
 
 		for (int i = 0; i < players.length; i++) {
 			if (i != wolf && i != target) {
-				if (!((Innocent) players[i].getRole()).isTrap()) {
+				if (((Innocent) players[i].getRole()).isTrap()) {
+					roundNeutrals.add(i);
+				} else {
 					players[i].addPoints();
+					roundWinners.add(i);
 				}
 			}
+		}
+	}
+
+	private void setRoles(Role[] roles){
+		for(int i=0; i<players.length; i++){
+			players[i].setRole(roles[i]);
 		}
 	}
 }

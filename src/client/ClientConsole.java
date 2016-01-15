@@ -23,50 +23,39 @@ public class ClientConsole {
 		boolean test = false;
 
 		while (!flag) {
-			if (!test) {
-				// port = 9443
-				System.out.print("Entrez l'adresse du serveur : ");
-				String serverAdress = keyboard.readLine();
-				System.out.print("Entrez le port du serveur : ");
-				String serverPort = keyboard.readLine();
+			// port = 9443
+			System.out.print("Entrez l'adresse du serveur : ");
+			String serverAdress = keyboard.readLine();
+			System.out.print("Entrez le port du serveur : ");
+			String serverPort = keyboard.readLine();
 
-				ConnectionMessageType type = null;
+			ConnectionMessageType type = null;
 
-				while (type == null) {
-					System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\nVotre choix : ");
-					String choix = keyboard.readLine();
-					switch (choix) {
-					case "1":
-						type = ConnectionMessageType.CREATE_ACCOUNT;
-						break;
+			while (type == null) {
+				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\nVotre choix : ");
+				String choix = keyboard.readLine();
+				switch (choix) {
+				case "1":
+					type = ConnectionMessageType.CREATE_ACCOUNT;
+					break;
 
-					case "2":
-						type = ConnectionMessageType.AUTHENTICATE;
-						break;
+				case "2":
+					type = ConnectionMessageType.AUTHENTICATE;
+					break;
 
-					default:
-						System.out.println("Saisie incorrecte.");
-						break;
-					}
+				default:
+					System.out.println("Saisie incorrecte.");
+					break;
 				}
-
-				System.out.print("\nEntrez votre username : ");
-				String username = keyboard.readLine();
-				System.out.print("Entrez votre mot de passe : ");
-				String password = keyboard.readLine();
-
-				client = new Client(serverAdress, Integer.parseInt(serverPort), username, password);
-				client.connect(type);
-				flag = client.isConnected();
-			} else {
-				System.out.print("\nEntrez votre username : ");
-				String username = keyboard.readLine();
-				System.out.print("Entrez votre mot de passe : ");
-				String password = keyboard.readLine();
-				client = new Client("localhost", 9443, username, password);
-				System.out.println(client.connect(ConnectionMessageType.AUTHENTICATE));
-				flag = client.isConnected();
 			}
+			System.out.print("\nEntrez votre username : ");
+			String username = keyboard.readLine();
+			System.out.print("Entrez votre mot de passe : ");
+			String password = keyboard.readLine();
+
+			client = new Client(serverAdress, Integer.parseInt(serverPort), username, password);
+			System.out.println(client.connect(type));
+			flag = client.isConnected();
 		}
 
 		flag = false;

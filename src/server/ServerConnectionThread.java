@@ -33,8 +33,8 @@ public class ServerConnectionThread extends Thread {
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
-			connectionBean = (ConnectionBean) input.readObject();
-		} catch (IOException | ClassNotFoundException e1) {
+
+		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -47,22 +47,30 @@ public class ServerConnectionThread extends Thread {
 			prop.put("password", "root");
 			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
 			User user = null;
+			connectionBean = (ConnectionBean) input.readObject();
 			if (connectionBean.getType() == ConnectionMessageType.AUTHENTICATE) {
 				user = authenticate();
 			} else if (connectionBean.getType() == ConnectionMessageType.CREATE_ACCOUNT) {
 				user = createAccount();
+			} else {
+				socket.close();
+				interrupt();
 			}
 			if (user != null) {
 				synchronized (queue) {
 					serverUserThread = new ServerUserThread(user, queue);
 				}
-			}
-			serverUserThread.start();
-			synchronized (users) {
-				users.add(serverUserThread);
+				serverUserThread.start();
+				synchronized (users) {
+					users.add(serverUserThread);
+				}
 			}
 
 		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -84,7 +92,7 @@ public class ServerConnectionThread extends Thread {
 			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
 			try {
-				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
+				output.writeObject(ConnectionMessageType.SUCCESS);
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -94,7 +102,7 @@ public class ServerConnectionThread extends Thread {
 			System.out.println("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
 
 			try {
-				output.writeObject(new Integer(-1));
+				output.writeObject(ConnectionMessageType.FAIL);
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -126,7 +134,7 @@ public class ServerConnectionThread extends Thread {
 				resultSet.next();
 				System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
-				output.writeObject(Integer.parseInt(resultSet.getString("user_id")));
+				output.writeObject(ConnectionMessageType.SUCCESS);
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -136,7 +144,7 @@ public class ServerConnectionThread extends Thread {
 		} else {
 			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
 			try {
-				output.writeObject(new Integer(-1));
+				output.writeObject(ConnectionMessageType.EXIST);
 				output.flush();
 			} catch (IOException e) {
 				e.printStackTrace();

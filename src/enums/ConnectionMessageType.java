@@ -1,8 +1,5 @@
 package enums;
 
 public enum ConnectionMessageType {
-	AUTHENTICATE,
-	CREATE_ACCOUNT,
-	SUCCESS,
-	FAIL
+	DEFAULT, AUTHENTICATE, CREATE_ACCOUNT, SUCCESS, FAIL, EXIST, LEAVE
 }

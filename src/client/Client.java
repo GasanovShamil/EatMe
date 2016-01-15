@@ -16,7 +16,7 @@ public class Client {
 	ObjectInputStream input;
 	private String username;
 	private String password;
-	private Integer userID;
+	private ConnectionMessageType msg;
 	private boolean connected;
 	private Player[] players;
 	private int position;
@@ -32,7 +32,7 @@ public class Client {
 		}
 		this.username = username;
 		this.password = password;
-		userID = 0;
+		msg = ConnectionMessageType.DEFAULT;
 		connected = false;
 	}
 
@@ -128,7 +128,6 @@ public class Client {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public Object recieve() {
@@ -148,14 +147,17 @@ public class Client {
 
 		try {
 			send(new ConnectionBean(type, username, password));
-			userID = (Integer) recieve();
+			msg = (ConnectionMessageType) recieve();
 
-			if (userID > 0) {
+			if (msg == ConnectionMessageType.SUCCESS) {
 				connected = true;
 				result = "Vous êtes connecté sur le serveur.";
-			} else {
+			} else if(msg == ConnectionMessageType.FAIL) {
 				connected = false;
 				result = "Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.";
+			}else if(msg == ConnectionMessageType.EXIST) {
+				connected = false;
+				result = "L'utilisateur \""+username+"\" existe deja";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

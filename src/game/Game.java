@@ -28,7 +28,6 @@ public class Game extends Thread {
 			roundNeutrals = new ArrayList<Integer>();
 			roundLoser = -1;
 			numRound++;
-			System.out.println(players.length);
 			sendInfos();
 			recieveAll();
 			doGame();
@@ -48,12 +47,8 @@ public class Game extends Thread {
 
 	private void recieveAll() {
 		for (int i = 0; i < players.length; i++) {
-			players[i] = (Player) players[i].recieve();
+			players[i].setRole((Role) players[i].recieve());
 		}
-	}
-
-	private void recieve(int position) {
-		players[position] = (Player) players[position].recieve();
 	}
 
 	private void send(Object message, int position) {

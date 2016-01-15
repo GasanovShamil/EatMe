@@ -100,7 +100,7 @@ public class Client {
 			}
 		}
 		
-		players[position].send(players[position]);
+		send(players[position]);
 
 		return action;
 	}

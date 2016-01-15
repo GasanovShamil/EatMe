@@ -12,18 +12,18 @@ public class Game extends Thread {
 	private ArrayList<Integer> roundNeutrals;
 	private ArrayList<Integer> gameLosers;
 	private int roundLoser;
-	private boolean end;
+	
 
 	public Game(Player[] players) {
 		this.players = players;
 		numRound = 0;
-		end = false;
+		
 
 		randomRoles();
 	}
 
 	public void run() {
-		while (!isInterrupted() && !end) {
+		while (!isInterrupted()) {
 			roundWinners = new ArrayList<Integer>();
 			roundNeutrals = new ArrayList<Integer>();
 			roundLoser = -1;
@@ -35,17 +35,15 @@ public class Game extends Thread {
 			if (winner != -1) {
 				send(GameMessageType.GAME_END_WINNER, winner);
 				send(GameMessageType.GAME_END_LOSER, gameLosers);
-				end = true;
+				interrupt();
 			} else {
 				send(GameMessageType.ROUND_END_WINNER, roundWinners);
 				send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
 				send(GameMessageType.ROUND_END_LOSER, roundLoser);
-				System.out.println("attends tab des roles");
 				setRoles((Role[]) players[roundLoser].recieve());
 				for (int i = 0; i < players.length; i++) {
 					System.out.println(players[i].getUsername()+" : "+players[i].getRole());
 				}
-				System.out.println("recu tab des roles");
 			}
 		}
 	}
@@ -143,6 +141,7 @@ public class Game extends Thread {
 				}
 			}
 		}
+		
 		if (check != -1) {
 			gameLosers = new ArrayList<Integer>();
 			for (int i = 0; i < players.length; i++) {
@@ -150,6 +149,7 @@ public class Game extends Thread {
 					gameLosers.add(i);
 			}
 		}
+		
 		return check;
 	}
 

@@ -41,7 +41,7 @@ public class ServerUserThread extends Thread {
 			}
 			break;
 		case DECONNECT:
-
+			interrupt();
 			break;
 		default:
 			break;

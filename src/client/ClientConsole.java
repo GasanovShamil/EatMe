@@ -32,7 +32,7 @@ public class ClientConsole {
 			ConnectionMessageType type = null;
 
 			while (type == null) {
-				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\nVotre choix : ");
+				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" +"\n3/ Quiter"+ "\nVotre choix : ");
 				String choix = keyboard.readLine();
 				switch (choix) {
 				case "1":
@@ -42,7 +42,9 @@ public class ClientConsole {
 				case "2":
 					type = ConnectionMessageType.AUTHENTICATE;
 					break;
-
+				case "3":
+					System.exit(0);
+					break;
 				default:
 					System.out.println("Saisie incorrecte.");
 					break;
@@ -88,6 +90,7 @@ public class ClientConsole {
 				break;
 
 			case "999":
+				client.send(StartGameType.DECONNECT);
 				flag = true;
 				break;
 

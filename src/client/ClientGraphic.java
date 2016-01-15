@@ -112,7 +112,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case INGAME:
-			System.out.println("Shalom");
+			System.out.println("Start");
 			break;
 
 		default:
@@ -124,8 +124,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		refresh();
 		
 		if (mode == Mode.WAITING){
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("Waiting");
 			players = (Player[]) client.recieve();
-			switchMode(Mode.INGAME);
+			System.out.println("J'attend");
 		}
 	}
 

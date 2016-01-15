@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 
-import enums.ConnectionMessageType;
+import enums.Message;
 import game.*;
 
 public class Client {
@@ -15,14 +13,13 @@ public class Client {
 	ObjectOutputStream output;
 	ObjectInputStream input;
 	private String username;
-	private String password;
-	private ConnectionMessageType msg;
+	private Message msg;
 	private boolean connected;
 	private Player[] players;
 	private int position;
 
 	public Client() {
-		msg = ConnectionMessageType.DEFAULT;
+		msg = Message.NULL;
 		connected = false;
 	}
 
@@ -148,22 +145,21 @@ public class Client {
 		return flag;
 	}
 
-	public String connect(ConnectionMessageType type, String username, String password) {
+	public String connect(Message type, String username, String password) {
 		String result = "";
 
 		try {
 			send(new ConnectionBean(type, username, password));
-			msg = (ConnectionMessageType) recieve();
+			msg = (Message) recieve();
 
-			if (msg == ConnectionMessageType.SUCCESS) {
+			if (msg == Message.SUCCESS) {
 				connected = true;
 				this.username = username;
-				this.password = password;
 				result = "Vous êtes connecté sur le serveur.";
-			} else if (msg == ConnectionMessageType.FAIL) {
+			} else if (msg == Message.FAIL) {
 				connected = false;
 				result = "Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.";
-			} else if (msg == ConnectionMessageType.EXIST) {
+			} else if (msg == Message.EXIST) {
 				connected = false;
 				result = "L'utilisateur \"" + username + "\" existe deja";
 			}

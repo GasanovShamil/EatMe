@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
+@SuppressWarnings("serial")
 public class User implements Serializable {
 	private String username;
 	private transient Socket socket;

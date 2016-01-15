@@ -2,7 +2,6 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -14,20 +13,18 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 
 import client.Client;
 import enums.*;
 
+@SuppressWarnings("serial")
 public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel paneLogo = new JPanel();
@@ -39,8 +36,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	private JPanel paneStartGame = new JPanel();
 	private JPanel paneWaintingRound = new JPanel();
 	private JPanel paneRound = new JPanel();
-	private JPanel paneRoundEND = new JPanel();
-	private JPanel paneGameEND = new JPanel();
 
 	private Mode mode;
 	private String error;
@@ -80,6 +75,12 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		password = "";
 		check = true;
 		client = new Client();
+	}
+
+	private JLabel getError() {
+		JLabel jlError = new JLabel(error);
+		jlError.setForeground(new Color(205, 92, 92));
+		return jlError;
 	}
 
 	private void switchMode(Mode mode) {
@@ -228,9 +229,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		});
 		pane.add(jbConnect);
 
-		JLabel jlError = new JLabel(error);
-		jlError.setForeground(new Color(205, 92, 92));
-		pane.add(jlError);
+		pane.add(getError());
 
 		return pane;
 	}
@@ -278,7 +277,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				System.out.println(check);
 
 				if (!username.isEmpty() && !password.isEmpty() && check) {
-					client.connect(ConnectionMessageType.CREATE_ACCOUNT, username, password);
+					error = client.connect(Message.CREATE_ACCOUNT, username, password);
 					error = "";
 					switchMode(Mode.MENU);
 				} else if (!check) {
@@ -293,9 +292,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		});
 		pane.add(jbSubscribe);
 
-		JLabel jlError = new JLabel(error);
-		jlError.setForeground(new Color(205, 92, 92));
-		pane.add(jlError);
+		pane.add(getError());
 
 		return pane;
 	}
@@ -307,7 +304,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		removePanels();
 		// container.add(displayPaneLogo(), BorderLayout.WEST);
 		// container.add(displayPaneChoice(), BorderLayout.CENTER);
-		show();
 		pack();
 		setVisible(true);
 
@@ -503,7 +499,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		buttStart3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				client.send(StartGameType.START_3P);
+				client.send(Message.START_3P);
 
 				// container.add(displayPaneWaintingRound(),
 				// BorderLayout.CENTER);
@@ -513,29 +509,29 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		buttStart4.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				client.send(StartGameType.START_4P);
+				client.send(Message.START_4P);
 
 				// container.add(displayPaneWaintingRound(),
 				// BorderLayout.CENTER);
 
 			}
 		});
-		
+
 		buttStart5.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				client.send(StartGameType.START_5P);
+				client.send(Message.START_5P);
 
 				// container.add(displayPaneWaintingRound(),
 				// BorderLayout.CENTER);
 
 			}
 		});
-		
+
 		buttStart6.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				client.send(StartGameType.START_6P);
+				client.send(Message.START_6P);
 				// container.add(displayPaneWaintingRound(),
 				// BorderLayout.CENTER);
 
@@ -574,20 +570,19 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	@Override
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		
-		client.send(ConnectionMessageType.LEAVE);
-		
+		client.send(Message.DECONNECT);
+
 		e.getWindow().setVisible(false);
 		System.exit(0);
 	}
@@ -595,24 +590,24 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	@Override
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

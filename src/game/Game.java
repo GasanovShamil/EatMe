@@ -1,13 +1,10 @@
 package game;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import enums.GameMessageType;
+import enums.Message;
 
 public class Game extends Thread {
 	private Player[] players;
-	private int numRound;
 	private ArrayList<Integer> roundWinners;
 	private ArrayList<Integer> roundNeutrals;
 	private ArrayList<Integer> gameLosers;
@@ -15,9 +12,6 @@ public class Game extends Thread {
 
 	public Game(Player[] players) {
 		this.players = players;
-		numRound = 0;
-		
-
 		randomRoles();
 	}
 
@@ -26,19 +20,18 @@ public class Game extends Thread {
 			roundWinners = new ArrayList<Integer>();
 			roundNeutrals = new ArrayList<Integer>();
 			roundLoser = -1;
-			numRound++;
 			sendInfos();
 			recieveAll();
 			doGame();
 			int winner = checkWin();
 			if (winner != -1) {
-				send(GameMessageType.GAME_END_WINNER, winner);
-				send(GameMessageType.GAME_END_LOSER, gameLosers);
+				send(Message.GAME_END_WINNER, winner);
+				send(Message.GAME_END_LOSER, gameLosers);
 				interrupt();
 			} else {
-				send(GameMessageType.ROUND_END_WINNER, roundWinners);
-				send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
-				send(GameMessageType.ROUND_END_LOSER, roundLoser);
+				send(Message.ROUND_END_WINNER, roundWinners);
+				send(Message.ROUND_END_NEUTRAL, roundNeutrals);
+				send(Message.ROUND_END_LOSER, roundLoser);
 				setRoles((Role[]) players[roundLoser].recieve());
 				for (int i = 0; i < players.length; i++) {
 					System.out.println(players[i].getUsername()+" : "+players[i].getRole());
@@ -69,16 +62,6 @@ public class Game extends Thread {
 			positions.add(i);
 		}
 		send(players, positions);
-	}
-
-	private ArrayList<Integer> getInnocents() {
-		ArrayList<Integer> positions = new ArrayList<Integer>();
-		for (Player p : players) {
-			if (!p.getRole().isWolf()) {
-				positions.add(p.getPosition());
-			}
-		}
-		return positions;
 	}
 
 	private int getWolf() {

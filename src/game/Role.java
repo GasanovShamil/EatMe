@@ -3,6 +3,7 @@ package game;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@SuppressWarnings("serial")
 public abstract class Role implements Serializable{
 	private String name;
 	

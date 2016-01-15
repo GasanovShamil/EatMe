@@ -1,5 +1,6 @@
 package game;
 
+@SuppressWarnings("serial")
 public class Wolf extends Role {
 	Player target;
 

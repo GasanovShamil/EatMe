@@ -1,6 +1,6 @@
 package server;
 
-import enums.StartGameType;
+import enums.Message;
 import game.User;
 
 public class ServerUserThread extends Thread {
@@ -13,7 +13,7 @@ public class ServerUserThread extends Thread {
 	}
 
 	public void run() {
-		StartGameType msg = (StartGameType) user.recieve();
+		Message msg = (Message) user.recieve();
 
 		switch (msg) {
 		case START_3P:

@@ -20,7 +20,6 @@ public class ClientConsole {
 		Client client = null;
 		boolean flag = false;
 		boolean inGame = false;
-		boolean test = false;
 		client = new Client();
 		// port = 9443
 		do {
@@ -34,7 +33,7 @@ public class ClientConsole {
 			}
 		} while (!flag);
 
-		ConnectionMessageType type = null;
+		Message type = null;
 		flag = false;
 
 		while (!flag) {
@@ -43,11 +42,11 @@ public class ClientConsole {
 				String choix = keyboard.readLine();
 				switch (choix) {
 				case "1":
-					type = ConnectionMessageType.CREATE_ACCOUNT;
+					type = Message.CREATE_ACCOUNT;
 					break;
 
 				case "2":
-					type = ConnectionMessageType.AUTHENTICATE;
+					type = Message.AUTHENTICATE;
 					break;
 				case "3":
 					System.exit(0);
@@ -76,27 +75,27 @@ public class ClientConsole {
 			String choix = keyboard.readLine();
 			switch (choix) {
 			case "1":
-				client.send(StartGameType.START_3P);
+				client.send(Message.START_3P);
 				inGame = true;
 				break;
 
 			case "2":
-				client.send(StartGameType.START_4P);
+				client.send(Message.START_4P);
 				inGame = true;
 				break;
 
 			case "3":
-				client.send(StartGameType.START_5P);
+				client.send(Message.START_5P);
 				inGame = true;
 				break;
 
 			case "4":
-				client.send(StartGameType.START_6P);
+				client.send(Message.START_6P);
 				inGame = true;
 				break;
 
 			case "999":
-				client.send(StartGameType.DECONNECT);
+				client.send(Message.DECONNECT);
 				flag = true;
 				break;
 
@@ -115,7 +114,7 @@ public class ClientConsole {
 				System.out.print("Votre choix : ");
 				System.out.println(client.doAction(keyboard.readLine()));
 
-				GameMessageType message = (GameMessageType) client.recieve();
+				Message message = (Message) client.recieve();
 
 				switch (message) {
 				case GAME_END_LOSER:

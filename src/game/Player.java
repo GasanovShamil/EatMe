@@ -2,6 +2,7 @@ package game;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Player implements Serializable {
 	private User user;
 	private Role role;
@@ -47,10 +48,6 @@ public class Player implements Serializable {
 	public int calcPoints() {
 		return (role instanceof Innocent) ? ((Innocent) role).getValue()
 				: ((Innocent) ((Wolf) role).getTarget().role).getValue();
-	}
-	
-	private int calcPointsTMP(){
-		return 0;
 	}
 	
 	public void send(Object message){

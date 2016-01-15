@@ -1,24 +1,22 @@
 package client;
+
 import java.io.Serializable;
 
 import client.ConnectionBean;
-import enums.ConnectionMessageType;
+import enums.Message;
 
-public class ConnectionBean implements Serializable{
-	
-	private ConnectionMessageType type;
-	
-	private String login,password;
-	
-	
-	public ConnectionBean(ConnectionMessageType type, String login, String password){
-		this.type=type;
-		this.login=login;
-		this.password=password;
+@SuppressWarnings("serial")
+public class ConnectionBean implements Serializable {
+	private Message type;
+	private String login, password;
+
+	public ConnectionBean(Message type, String login, String password) {
+		this.type = type;
+		this.login = login;
+		this.password = password;
 	}
 
-
-	public ConnectionMessageType getType() {
+	public Message getType() {
 		return type;
 	}
 
@@ -26,11 +24,8 @@ public class ConnectionBean implements Serializable{
 		return login;
 	}
 
-
 	public String getPassword() {
 		return password;
 	}
 
-
-	
 }

@@ -146,6 +146,7 @@ public class ClientConsole {
 					listRoles.remove(role);
 				}
 				roles[roles.length - 1] = listRoles.get(0);
+				client.send(roles);
 				break;
 
 			case ROUND_END_NEUTRAL:

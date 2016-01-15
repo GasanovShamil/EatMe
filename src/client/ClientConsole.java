@@ -129,7 +129,7 @@ public class ClientConsole {
 				break;
 
 			case ROUND_END_LOSER:
-				System.out.println(client.getRoundPoints());
+				System.out.println("-" + client.getRoundPoints());
 				System.out.println("ATTRIB ROLE !");
 
 				ArrayList<Role> listRoles = Role.generateRoles(players.length);

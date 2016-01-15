@@ -35,12 +35,17 @@ public class Game extends Thread {
 			if (winner != -1) {
 				send(GameMessageType.GAME_END_WINNER, winner);
 				send(GameMessageType.GAME_END_LOSER, gameLosers);
-				end=true;
+				end = true;
 			} else {
 				send(GameMessageType.ROUND_END_WINNER, roundWinners);
 				send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
 				send(GameMessageType.ROUND_END_LOSER, roundLoser);
+				System.out.println("attends tab des roles");
 				setRoles((Role[]) players[roundLoser].recieve());
+				for (int i = 0; i < players.length; i++) {
+					System.out.println(players[i].getRole());
+				}
+				System.out.println("recu tab des roles");
 			}
 		}
 	}

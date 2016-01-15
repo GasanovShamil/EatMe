@@ -28,6 +28,7 @@ public class User implements Serializable {
 			output.writeObject(message);
 			Thread.sleep(1000);
 			output.flush();
+			output.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

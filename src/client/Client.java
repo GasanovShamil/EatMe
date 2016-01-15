@@ -122,6 +122,7 @@ public class Client {
 			output.writeObject(obj);
 			Thread.sleep(1000);
 			output.flush();
+			output.reset();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

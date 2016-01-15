@@ -43,7 +43,7 @@ public class Game extends Thread {
 				System.out.println("attends tab des roles");
 				setRoles((Role[]) players[roundLoser].recieve());
 				for (int i = 0; i < players.length; i++) {
-					System.out.println(players[i].getRole());
+					System.out.println(players[i].getUsername()+" : "+players[i].getRole());
 				}
 				System.out.println("recu tab des roles");
 			}
@@ -201,4 +201,5 @@ public class Game extends Thread {
 			players[i].setRole(roles[i]);
 		}
 	}
+	
 }

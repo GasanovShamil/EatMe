@@ -23,21 +23,12 @@ import javax.swing.JTextField;
 
 import client.Client;
 import enums.*;
+import game.Player;
 
 @SuppressWarnings("serial")
 public class ClientGraphic extends JFrame implements WindowListener {
-
-	private JPanel paneLogo = new JPanel();
-	private JPanel paneChoice = new JPanel();
-	private JPanel paneCreate = new JPanel();
-	private JPanel paneConnect = new JPanel();
-	private JPanel paneDeconnectHome = new JPanel();
-	private JPanel paneConnectionFaield = new JPanel();
-	private JPanel paneStartGame = new JPanel();
-	private JPanel paneWaintingRound = new JPanel();
-	private JPanel paneRound = new JPanel();
-
 	private Mode mode;
+	private Dimension dimension;
 	private String error;
 	private String serverAdress;
 	private String serverPort;
@@ -46,28 +37,25 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	private boolean check;
 
 	private Client client;
+	private Player[] players;
 
 	public ClientGraphic() {
 		super("Eat Me If You Can !");
-
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
 		setBackground(Color.lightGray);
 		setFont(new Font("Trebuchet MS", Font.PLAIN, 14));
-		setIconImage(Toolkit.getDefaultToolkit().getImage("img/EMIYC_icone.png"));
-
+		setIconImage(Toolkit.getDefaultToolkit().getImage("img/icone.png"));
 		setSize(1000, 600);
 		setResizable(false);
 		setLocationRelativeTo(null);
-
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
 		setVisible(true);
 
 		init();
-		switchMode(Mode.DEFAULT);
-		this.addWindowListener(this);
 	}
 
 	private void init() {
+		dimension = new Dimension(600, 600);
 		error = "";
 		serverAdress = "";
 		serverPort = "";
@@ -75,6 +63,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		password = "";
 		check = true;
 		client = new Client();
+		players = null;
+
+		switchMode(Mode.DEFAULT);
+	}
+
+	private void ok() {
+		error = "";
+		check = true;
 	}
 
 	private JLabel getError() {
@@ -102,7 +98,21 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		case CONNECT:
 			pane.add(getLogoPanel(), BorderLayout.WEST);
-			pane.add(getDefaultPanel(), BorderLayout.CENTER);
+			pane.add(getConnectPanel(), BorderLayout.CENTER);
+			break;
+
+		case MENU:
+			pane.add(getLogoPanel(), BorderLayout.WEST);
+			pane.add(getMenuPanel(), BorderLayout.CENTER);
+			break;
+
+		case WAITING:
+			pane.add(getLogoPanel(), BorderLayout.WEST);
+			pane.add(getWaitingPanel(), BorderLayout.CENTER);
+			break;
+
+		case INGAME:
+			System.out.println("Shalom");
 			break;
 
 		default:
@@ -112,6 +122,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		setContentPane(pane);
 		refresh();
+		
+		if (mode == Mode.WAITING){
+			players = (Player[]) client.recieve();
+			switchMode(Mode.INGAME);
+		}
 	}
 
 	private void refresh() {
@@ -128,7 +143,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jlDate.setOpaque(true);
 		pane.add(jlDate);
 
-		ImageIcon image = new ImageIcon("img/homelogo.jpg");
+		ImageIcon image = new ImageIcon("img/logo.png");
 		JLabel jlImage = new JLabel(image);
 		jlImage.setPreferredSize(new Dimension(200, 200));
 		pane.add(jlImage);
@@ -141,12 +156,13 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel getDefaultPanel() {
 		JPanel pane = new JPanel();
-		pane.setPreferredSize(new Dimension(600, 600));
+		pane.setPreferredSize(dimension);
 
 		JLabel jlServer = new JLabel("Entrez l'adresse du serveur : ");
 		Color colorServer = (serverAdress.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlServer.setForeground(colorServer);
 		pane.add(jlServer);
+
 		JTextField jtfServer = new JTextField(serverAdress);
 		jtfServer.setPreferredSize(new Dimension(550, 25));
 		pane.add(jtfServer);
@@ -155,6 +171,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		Color colorPort = (serverPort.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlPort.setForeground(colorPort);
 		pane.add(jlPort);
+
 		JTextField jtfPort = new JTextField(serverPort);
 		jtfPort.setPreferredSize(new Dimension(550, 25));
 		pane.add(jtfPort);
@@ -166,7 +183,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				serverAdress = jtfServer.getText();
 				serverPort = jtfPort.getText();
 
-				if (!serverAdress.isEmpty() && !serverPort.isEmpty()) {
+				if (!serverAdress.isEmpty() && !serverPort.isEmpty() && check) {
 					int port = -1;
 
 					try {
@@ -180,7 +197,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						error = "Le port est non valide.";
 						switchMode(mode);
 					} else if (client.setConnection(serverAdress, port)) {
-						error = "";
+						ok();
 						switchMode(Mode.SUBSCRIBE);
 					} else {
 						error = "Connexion impossible !";
@@ -215,7 +232,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						error = "Le port est non valide.";
 						switchMode(mode);
 					} else if (client.setConnection(serverAdress, port)) {
-						error = "";
+						ok();
 						switchMode(Mode.CONNECT);
 					} else {
 						error = "Connexion impossible !";
@@ -236,31 +253,33 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel getSubscribePanel() {
 		JPanel pane = new JPanel();
-		pane.setPreferredSize(new Dimension(600, 600));
+		pane.setPreferredSize(dimension);
 
 		JLabel jlUsername = new JLabel("Saisir identifiant : ");
 		Color colorUsername = (username.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlUsername.setForeground(colorUsername);
 		pane.add(jlUsername);
+
 		JTextField jtfUsername = new JTextField(username);
 		jtfUsername.setPreferredSize(new Dimension(550, 25));
 		pane.add(jtfUsername);
 
+		Color colorPasswords = (password.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
+
 		JLabel jlPassword = new JLabel("Saisir mot de passe : ");
+		jlPassword.setForeground(colorPasswords);
+		pane.add(jlPassword);
+
 		JPasswordField jpfPassword = new JPasswordField();
 		jpfPassword.setPreferredSize(new Dimension(550, 25));
+		pane.add(jpfPassword);
 
 		JLabel jlNewPassword = new JLabel("Confirmer mot de passe : ");
+		jlNewPassword.setForeground(colorPasswords);
+		pane.add(jlNewPassword);
+
 		JPasswordField jpfNewPassword = new JPasswordField();
 		jpfNewPassword.setPreferredSize(new Dimension(550, 25));
-
-		Color colorPasswords = (password.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
-		jlPassword.setForeground(colorPasswords);
-		jlNewPassword.setForeground(colorPasswords);
-
-		pane.add(jlPassword);
-		pane.add(jpfPassword);
-		pane.add(jlNewPassword);
 		pane.add(jpfNewPassword);
 
 		JButton jbSubscribe = new JButton("S'inscrire");
@@ -272,13 +291,16 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				String newPassword = new String(jpfNewPassword.getPassword());
 				check = (password.compareTo(newPassword) == 0);
 
-				System.out.println(password);
-				System.out.println(newPassword);
-				System.out.println(check);
-
 				if (!username.isEmpty() && !password.isEmpty() && check) {
-					error = client.connect(Message.CREATE_ACCOUNT, username, password);
-					error = "";
+					Message msg = client.connect(Message.CREATE_ACCOUNT, username, password);
+					if (msg == Message.SUCCESS) {
+						ok();
+						switchMode(Mode.MENU);
+					} else {
+						error = "Cet identifiant est déjà utilisé.";
+						check = false;
+						switchMode(mode);
+					}
 					switchMode(Mode.MENU);
 				} else if (!check) {
 					password = "";
@@ -297,317 +319,184 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		return pane;
 	}
 
-	public void displayBackHome() {
-		// repaintContainer();
-		// repaintChoicePanel();
-		// repaintPaneLogo();
-		removePanels();
-		// container.add(displayPaneLogo(), BorderLayout.WEST);
-		// container.add(displayPaneChoice(), BorderLayout.CENTER);
-		pack();
-		setVisible(true);
+	private JPanel getConnectPanel() {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
 
-	}
+		JLabel jlUsername = new JLabel("Saisir identifiant : ");
+		Color colorUsername = (username.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
+		jlUsername.setForeground(colorUsername);
+		pane.add(jlUsername);
+		JTextField jtfUsername = new JTextField(username);
+		jtfUsername.setPreferredSize(new Dimension(550, 25));
+		pane.add(jtfUsername);
 
-	public JPanel displayDeconnectHome() {
-		paneDeconnectHome.setPreferredSize(new Dimension(100, 100));
-		JButton buttDeconnect = new JButton("Quit");
-		buttDeconnect.setIcon(new ImageIcon("img/quit.jpg"));
-		// buttDeconnect.setPreferredSize(new Dimension(100,50));
-		JButton buttHome = new JButton("Home");
-		buttHome.setIcon(new ImageIcon("img/home.jpg"));
-		// buttHome.setPreferredSize(new Dimension(100,50));
-		paneDeconnectHome.add(buttDeconnect);
-		paneDeconnectHome.add(buttHome);
-		buttDeconnect.addActionListener(new ActionListener() {
+		JLabel jlPassword = new JLabel("Saisir mot de passe : ");
+		Color colorPasswords = (password.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
+		jlPassword.setForeground(colorPasswords);
+		pane.add(jlPassword);
+
+		JPasswordField jpfPassword = new JPasswordField();
+		jpfPassword.setPreferredSize(new Dimension(550, 25));
+		jlPassword.setForeground(colorPasswords);
+		pane.add(jpfPassword);
+
+		JButton jbConnect = new JButton("Se connecter");
+		jbConnect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				username = jtfUsername.getText();
+				password = new String(jpfPassword.getPassword());
 
+				if (!username.isEmpty() && !password.isEmpty() && check) {
+					Message msg = client.connect(Message.AUTHENTICATE, username, password);
+					if (msg == Message.SUCCESS) {
+						ok();
+						switchMode(Mode.MENU);
+					} else {
+						error = "Identifiants incorrects.";
+						check = false;
+						switchMode(mode);
+					}
+					switchMode(Mode.MENU);
+				} else {
+					error = "Champs obligatoire !";
+					switchMode(mode);
+				}
 			}
 		});
-		buttHome.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				displayBackHome();
-				// container.remove(displayDeconnectHome());
-				// removePanels();
-			}
-		});
+		pane.add(jbConnect);
 
-		return paneDeconnectHome;
+		pane.add(getError());
 
+		return pane;
 	}
 
-	public void repaintContainer() {
-		// container.removeAll();
-		// container.validate();
-		// container.repaint();
+	private JPanel getMenuPanel() {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
 
+		if (check) {
+			JButton jbStartGame = new JButton("Lancer une partie");
+			jbStartGame.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					check = false;
+					switchMode(mode);
+				}
+			});
+			pane.add(jbStartGame);
+
+			JButton jbDeconnect = new JButton("Se déconnecter");
+			jbDeconnect.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					client.send(Message.DECONNECT);
+					switchMode(Mode.DEFAULT);
+				}
+			});
+			pane.add(jbDeconnect);
+		} else {
+			JButton jbStart3 = new JButton("3 joueurs");
+			jbStart3.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					client.send(Message.START_3P);
+					switchMode(Mode.WAITING);
+				}
+			});
+			pane.add(jbStart3);
+
+			JButton jbStart4 = new JButton("4 joueurs");
+			jbStart4.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					client.send(Message.START_4P);
+					switchMode(mode);
+				}
+			});
+			pane.add(jbStart4);
+
+			JButton jbStart5 = new JButton("5 joueurs");
+			jbStart5.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					client.send(Message.START_5P);
+					switchMode(mode);
+				}
+			});
+			pane.add(jbStart5);
+
+			JButton jbStart6 = new JButton("6 joueurs");
+			jbStart6.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					client.send(Message.START_6P);
+					switchMode(mode);
+				}
+			});
+			pane.add(jbStart6);
+
+			JButton jbCancel = new JButton("Retour");
+			jbCancel.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					check = true;
+					switchMode(mode);
+				}
+			});
+			pane.add(jbCancel);
+		}
+
+		return pane;
 	}
 
-	public void repaintPaneLogo() {
-		paneLogo.removeAll();
-		paneLogo.validate();
-		paneLogo.repaint();
+	private JPanel getWaitingPanel() {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
 
-	}
+		ImageIcon image = new ImageIcon("img/loading.gif");
+		JLabel jlImage = new JLabel(image);
+		pane.add(jlImage);
 
-	public void repaintChoicePanel() {
-		paneChoice.removeAll();
-		paneChoice.validate();
-		paneChoice.repaint();
-
-	}
-
-	public void removePanels() {
-	}
-
-	public JPanel displayPaneChoice() {
-
-		paneChoice.setPreferredSize(new Dimension(600, 600));
-
-		JLabel labelServerAdress = new JLabel("Entrez l'adresse du serveur : ");
-		JLabel labelServerPort = new JLabel("Entrez le port du serveur : ");
-		JLabel labelChoixConnectionType = new JLabel("Votre choix : ");
-
-		JTextField textFieldServerAdress = new JTextField();
-		JTextField textFieldServerPort = new JTextField();
-
-		JButton buttChoixCreateAccount = new JButton("Vous inscrire ?");
-		JButton buttChoixAuthenticate = new JButton("Vous connecter ?");
-
-		textFieldServerAdress.setPreferredSize(new Dimension(550, 25));
-		textFieldServerPort.setPreferredSize(new Dimension(550, 25));
-
-		paneChoice.add(labelServerAdress);
-		paneChoice.add(textFieldServerAdress);
-		paneChoice.add(labelServerPort);
-		paneChoice.add(textFieldServerPort);
-		paneChoice.add(labelChoixConnectionType);
-		paneChoice.add(buttChoixCreateAccount);
-		paneChoice.add(buttChoixAuthenticate);
-
-		// serverAdress = textFieldServerAdress.getText();
-		// serverPort = Integer.parseInt(textFieldServerPort.getText());
-		return paneChoice;
-	}
-
-	public JPanel displayPaneConnect() {
-		// removePanels();
-		// container.add(displayDeconnectHome(), BorderLayout.EAST);
-		// container.add(displayPaneLogo(), BorderLayout.WEST);
-		paneConnect.setPreferredSize(new Dimension(600, 600));
-
-		JLabel labelUsername = new JLabel("Entrez votre username : ");
-		JLabel labelPassword = new JLabel("Entrez votre mot de passe : ");
-
-		JTextField textFieldUsername = new JTextField();
-		JPasswordField passwordField = new JPasswordField();
-
-		textFieldUsername.setPreferredSize(new Dimension(550, 25));
-		passwordField.setPreferredSize(new Dimension(550, 25));
-
-		JButton buttAuthenticate = new JButton("Se connecter");
-
-		buttAuthenticate.setPreferredSize(new Dimension(200, 40));
-		paneConnect.add(labelUsername);
-		paneConnect.add(textFieldUsername);
-		paneConnect.add(labelPassword);
-		paneConnect.add(passwordField);
-		paneConnect.add(buttAuthenticate);
-		buttAuthenticate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				char[] pass = passwordField.getPassword();
-
-				username = textFieldUsername.getText();
-				password = new String(pass);
-
-			}
-		});
-		return paneConnect;
-
-	}
-
-	public JPanel displayPaneCreate() {
-		// removePanels();
-		// container.add(displayDeconnectHome(), BorderLayout.EAST);
-		// container.add(displayPaneLogo(), BorderLayout.WEST);
-		paneCreate.setPreferredSize(new Dimension(600, 600));
-
-		JLabel labelUsername = new JLabel("Entrez votre username : ");
-		JLabel labelPassword = new JLabel("Entrez votre mot de passe : ");
-		JLabel labelPasswordConfirm = new JLabel("Confirmer votre mot de passe : ");
-
-		JTextField textFieldUsername = new JTextField();
-		JPasswordField passwordField = new JPasswordField();
-		JPasswordField passworConfirmdField = new JPasswordField();
-
-		textFieldUsername.setPreferredSize(new Dimension(550, 25));
-		passwordField.setPreferredSize(new Dimension(550, 25));
-		passworConfirmdField.setPreferredSize(new Dimension(550, 25));
-
-		JButton buttCreateAccount = new JButton("S'inscrire");
-		buttCreateAccount.setPreferredSize(new Dimension(200, 40));
-
-		paneCreate.add(labelUsername);
-		paneCreate.add(textFieldUsername);
-		paneCreate.add(labelPassword);
-		paneCreate.add(passwordField);
-		paneCreate.add(labelPasswordConfirm);
-		paneCreate.add(passworConfirmdField);
-		paneCreate.add(buttCreateAccount);
-
-		password = new String(passwordField.getPassword());
-		char[] passC = passwordField.getPassword();
-		username = textFieldUsername.getText();
-
-		return paneCreate;
-	}
-
-	public JPanel displayPaneConnectionFaield() {
-		// container.add(displayDeconnectHome(), BorderLayout.EAST);
-		// container.add(displayPaneLogo(), BorderLayout.WEST);
-		paneConnectionFaield.setPreferredSize(new Dimension(600, 600));
-		// paneConnectionFaield.setBackground(Color.red);
-		JLabel labelConnectionFaield = new JLabel("Identifiants incorrects");
-		labelConnectionFaield.setForeground(Color.red);
-
-		paneConnectionFaield.add(labelConnectionFaield);
-		return paneConnectionFaield;
-
-	}
-
-	public JPanel displayPaneStartGame() {
-		paneStartGame.setPreferredSize(new Dimension(600, 600));
-
-		JButton buttStart3 = new JButton("Lancer Une Partie Ã  3");
-		JButton buttStart4 = new JButton("Lancer Une Partie Ã  4");
-		JButton buttStart5 = new JButton("Lancer Une Partie Ã  5");
-		JButton buttStart6 = new JButton("Lancer Une Partie Ã  6");
-
-		buttStart3.setPreferredSize(new Dimension(500, 500));
-		buttStart4.setPreferredSize(new Dimension(500, 500));
-		buttStart5.setPreferredSize(new Dimension(500, 500));
-		buttStart6.setPreferredSize(new Dimension(500, 500));
-
-		paneStartGame.add(buttStart3);
-		paneStartGame.add(buttStart4);
-		paneStartGame.add(buttStart5);
-		paneStartGame.add(buttStart6);
-
-		buttStart3.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				client.send(Message.START_3P);
-
-				// container.add(displayPaneWaintingRound(),
-				// BorderLayout.CENTER);
-
-			}
-		});
-		buttStart4.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				client.send(Message.START_4P);
-
-				// container.add(displayPaneWaintingRound(),
-				// BorderLayout.CENTER);
-
-			}
-		});
-
-		buttStart5.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				client.send(Message.START_5P);
-
-				// container.add(displayPaneWaintingRound(),
-				// BorderLayout.CENTER);
-
-			}
-		});
-
-		buttStart6.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				client.send(Message.START_6P);
-				// container.add(displayPaneWaintingRound(),
-				// BorderLayout.CENTER);
-
-			}
-		});
-		// container.add(displayDeconnectHome(), BorderLayout.EAST);
-		return paneStartGame;
-	}
-
-	public JPanel displayPaneWaintingRound() {
-		// container.add(displayPaneLogo(), BorderLayout.WEST);
-		paneWaintingRound.setPreferredSize(new Dimension(600, 600));
-		paneWaintingRound.setBackground(Color.green);
-		JLabel labelpaneWaintingRound = new JLabel("En attente d'une PArtie");
-
-		paneConnectionFaield.add(labelpaneWaintingRound);
-		return paneConnectionFaield;
-	}
-
-	public JPanel displayPaneRoundInnocents() {
-
-		return paneRound;
-
-	}
-
-	public JPanel displayPaneRoundWolf() {
-
-		return paneRound;
-
-	}
-
-	public static void main(String[] args) throws IOException {
-		new ClientGraphic();
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		return pane;
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		client.send(Message.DECONNECT);
+		if (client.isConnected()) {
+			client.send(Message.DECONNECT);
+		}
 
 		e.getWindow().setVisible(false);
 		System.exit(0);
 	}
 
 	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
+	public void windowActivated(WindowEvent e) {
+	}
 
+	@Override
+	public void windowClosed(WindowEvent e) {
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
+	}
 
+	public static void main(String[] args) throws IOException {
+		new ClientGraphic();
 	}
 }

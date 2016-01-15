@@ -3,9 +3,11 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import enums.*;
 import game.Player;
+import game.Role;
 
 public class ClientConsole {
 	public static void main(String[] args) throws IOException {
@@ -111,8 +113,7 @@ public class ClientConsole {
 			Player[] players = (Player[]) client.recieve();
 			System.out.println(client.startRound(players));
 			System.out.print("Votre choix : ");
-			String choix = keyboard.readLine();
-			System.out.println(client.doAction(choix));
+			System.out.println(client.doAction(keyboard.readLine()));
 
 			GameMessageType message = (GameMessageType) client.recieve();
 
@@ -130,6 +131,21 @@ public class ClientConsole {
 			case ROUND_END_LOSER:
 				System.out.println(client.getRoundPoints());
 				System.out.println("ATTRIB ROLE !");
+
+				ArrayList<Role> listRoles = Role.generateRoles(players.length);
+				Role[] roles = new Role[players.length];
+
+				for (int i = 0; i < players.length - 1; i++) {
+					System.out.println("Role de : " + players[i].getUsername() + " ?");
+					for (int j = 0; j < listRoles.size(); j++) {
+						System.out.println(j + "/ " + listRoles.get(j).getName());
+					}
+					System.out.print("Votre choix : ");
+					Role role = listRoles.get(Integer.parseInt(keyboard.readLine()));
+					roles[i] = role;
+					listRoles.remove(role);
+				}
+				roles[roles.length - 1] = listRoles.get(0);
 				break;
 
 			case ROUND_END_NEUTRAL:

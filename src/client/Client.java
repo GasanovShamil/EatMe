@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import enums.ConnectionType;
 import game.*;
@@ -27,7 +28,6 @@ public class Client {
 
 			input = new ObjectInputStream(socket.getInputStream());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.username = username;
@@ -39,7 +39,7 @@ public class Client {
 	public String startRound(Player[] players) {
 		this.players = players;
 		int cpt = 0;
-		while (cpt < players.length && !players[cpt].getUser().getUsername().equals(username)) {
+		while (cpt < players.length && !players[cpt].getUsername().equals(username)) {
 			cpt++;
 		}
 		position = cpt;
@@ -51,7 +51,7 @@ public class Client {
 		String infos = "";
 
 		for (Player player : players) {
-			infos += player.getUser().getUsername() + " " + player.getPosition() + " " + player.getRole().getName()
+			infos += player.getUsername() + " " + player.getPosition() + " " + player.getRole().getName()
 					+ " " + player.getPoints() + "\n";
 		}
 
@@ -66,7 +66,7 @@ public class Client {
 			options += "\nMordre :";
 			for (int i = 0; i < players.length; i++) {
 				if (!players[i].equals(me)) {
-					options += "\n" + players[i].getPosition() + "/ " + players[i].getUser().getUsername() + " ("
+					options += "\n" + players[i].getPosition() + "/ " + players[i].getUsername() + " ("
 							+ players[i].getRole().getName() + ")";
 				}
 			}

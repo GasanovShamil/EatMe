@@ -23,43 +23,29 @@ public class Game extends Thread {
 	}
 
 	public void run() {
-		// while (!isInterrupted() && !end) {
-		roundWinners = new ArrayList<Integer>();
-		roundNeutrals = new ArrayList<Integer>();
-		roundLoser = -1;
-		numRound++;
-		System.out.println(players.length);
-		sendInfos();
-		recieveAll();
-		doGame();
-		int winner = checkWin();
-		if (winner != -1) {
-			send(GameMessageType.GAME_END_WINNER, winner);
-			send(GameMessageType.GAME_END_LOSER, gameLosers);
-		} else {
-			send(GameMessageType.ROUND_END_WINNER, roundWinners);
-			send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
-			send(GameMessageType.ROUND_END_LOSER, roundLoser);
-			setRoles((Role[])players[roundLoser].recieve());
+		while (!isInterrupted() && !end) {
+			roundWinners = new ArrayList<Integer>();
+			roundNeutrals = new ArrayList<Integer>();
+			roundLoser = -1;
+			numRound++;
+			System.out.println(players.length);
+			sendInfos();
+			recieveAll();
+			doGame();
+			int winner = checkWin();
+			if (winner != -1) {
+				send(GameMessageType.GAME_END_WINNER, winner);
+				send(GameMessageType.GAME_END_LOSER, gameLosers);
+				end=true;
+			} else {
+				send(GameMessageType.ROUND_END_WINNER, roundWinners);
+				send(GameMessageType.ROUND_END_NEUTRAL, roundNeutrals);
+				send(GameMessageType.ROUND_END_LOSER, roundLoser);
+				setRoles((Role[]) players[roundLoser].recieve());
+			}
 		}
 	}
 
-	// send(GameMessageType.YOUR_TURN, getInnocents());
-
-	// recieve(getInnocents());
-
-	// send(GameMessageType.YOUR_TURN, getWolf());
-
-	// recieve(getWolf());
-
-	// doGame();
-	/*
-	 * if (checkWin() != -1) { // SEND GEND end = true; } else { // SEND
-	 * CONTINUE } }
-	 */
-
-	
-	
 	private void recieveAll() {
 		for (int i = 0; i < players.length; i++) {
 			players[i] = (Player) players[i].recieve();
@@ -168,27 +154,8 @@ public class Game extends Thread {
 	}
 
 	private void randomRoles() {
-		int size = players.length;
-		ArrayList<Role> roles = new ArrayList<Role>();
+		ArrayList<Role> roles = Role.generateRoles(players.length);
 		int cpt = 0;
-
-		if (size >= 3) {
-			roles.add(new Wolf());
-			roles.add(new YoungKids());
-			roles.add(new Pig());
-
-			if (size >= 4) {
-				roles.add(new LittleRedCap());
-
-				if (size >= 5) {
-					roles.add(new Pig());
-
-					if (size == 6) {
-						roles.add(new Pig());
-					}
-				}
-			}
-		}
 
 		while (roles.size() > 0) {
 			int rand = (int) (Math.random() * roles.size());
@@ -196,7 +163,7 @@ public class Game extends Thread {
 
 			players[cpt++].setRole(role);
 			System.out.println(role);
-			System.out.println(players[cpt - 1].getUser().getUsername());
+			System.out.println(players[cpt - 1].getUsername());
 			roles.remove(role);
 		}
 	}
@@ -229,8 +196,8 @@ public class Game extends Thread {
 		}
 	}
 
-	private void setRoles(Role[] roles){
-		for(int i=0; i<players.length; i++){
+	private void setRoles(Role[] roles) {
+		for (int i = 0; i < players.length; i++) {
 			players[i].setRole(roles[i]);
 		}
 	}

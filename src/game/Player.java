@@ -15,8 +15,8 @@ public class Player implements Serializable {
 		points = 0;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUsername() {
+		return user.getUsername();
 	}
 
 	public Role getRole() {
@@ -58,10 +58,5 @@ public class Player implements Serializable {
 
 	public Object recieve(){
 		return user.recieve();
-	}
-	
-	public void chooseRoles() {
-		// TODO Auto-generated method stub
-
 	}
 }

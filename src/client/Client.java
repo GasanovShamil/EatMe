@@ -14,13 +14,13 @@ public class Client {
 	ObjectInputStream input;
 	private String username;
 	private Message msg;
-	private boolean connected;
+	private boolean authenticated;
 	private Player[] players;
 	private int position;
 
 	public Client() {
 		msg = Message.NULL;
-		connected = false;
+		authenticated = false;
 	}
 
 	public String startRound(Player[] players) {
@@ -100,8 +100,18 @@ public class Client {
 		return username;
 	}
 
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+
 	public boolean isConnected() {
-		return connected;
+		boolean flag = true;
+		try {
+			socket.sendUrgentData(0);
+		} catch (IOException e) {
+			flag = false;
+		}
+		return flag;
 	}
 
 	public void send(Object obj) {
@@ -147,11 +157,12 @@ public class Client {
 		send(new ConnectionBean(type, username, password));
 		msg = (Message) recieve();
 		if (msg == Message.SUCCESS) {
-			connected = true;
+			authenticated = true;
 			this.username = username;
 		} else {
-			connected = false;
+			authenticated = false;
 		}
 		return msg;
 	}
+
 }

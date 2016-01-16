@@ -73,7 +73,7 @@ public class ClientConsole {
 
 				System.out.println("L'utilisateur \"" + username + "\" existe deja");
 			}
-			flag = client.isConnected();
+			flag = client.isAuthenticated();
 		}
 
 		flag = false;

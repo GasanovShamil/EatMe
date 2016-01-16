@@ -24,10 +24,16 @@ public class User implements Serializable {
 		return username;
 	}
 
-	public boolean isDeconnected(){
-		return socket.isInputShutdown() || socket.isOutputShutdown() || socket.isClosed();
+	public boolean isConnected() {
+		boolean flag = true;
+		try {
+			socket.sendUrgentData(0);
+		} catch (IOException e) {
+			flag = false;
+		}
+		return flag;
 	}
-	
+
 	public void send(Object message) {
 		try {
 			output.writeObject(message);
@@ -48,11 +54,11 @@ public class User implements Serializable {
 		} catch (ClassNotFoundException e) {
 			System.out.println("CFE");
 			e.printStackTrace();
-			
+
 		} catch (IOException e) {
 			System.out.println("IO");
 			e.printStackTrace();
-			
+
 		}
 		return null;
 	}

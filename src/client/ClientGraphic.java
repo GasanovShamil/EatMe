@@ -2,6 +2,7 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -109,6 +110,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		case WAITING:
 			pane.add(getLogoPanel(), BorderLayout.WEST);
 			pane.add(getWaitingPanel(), BorderLayout.CENTER);
+			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			break;
 
 		case INGAME:
@@ -178,6 +180,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		pane.add(jtfPort);
 
 		JButton jbSubscribe = new JButton("S'inscrire");
+		jbSubscribe.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbSubscribe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -213,6 +216,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		pane.add(jbSubscribe);
 
 		JButton jbConnect = new JButton("Se connecter");
+		jbConnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbConnect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -284,6 +288,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		pane.add(jpfNewPassword);
 
 		JButton jbSubscribe = new JButton("S'inscrire");
+		jbSubscribe.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbSubscribe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -316,6 +321,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		pane.add(jbSubscribe);
 
 		JButton jbCancel = new JButton("Retour");
+		jbCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -350,8 +356,9 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jpfPassword.setPreferredSize(new Dimension(550, 25));
 		jlPassword.setForeground(colorPasswords);
 		pane.add(jpfPassword);
-
+		
 		JButton jbConnect = new JButton("Se connecter");
+		jbConnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbConnect.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -377,6 +384,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		pane.add(jbConnect);
 
 		JButton jbCancel = new JButton("Retour");
+		jbCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -396,6 +404,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		if (check) {
 			JButton jbStartGame = new JButton("Lancer une partie");
+			jbStartGame.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStartGame.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -406,6 +415,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbStartGame);
 
 			JButton jbDeconnect = new JButton("Se déconnecter");
+			jbDeconnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbDeconnect.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -416,6 +426,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbDeconnect);
 		} else {
 			JButton jbStart3 = new JButton("3 joueurs");
+			jbStart3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStart3.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -426,6 +437,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbStart3);
 
 			JButton jbStart4 = new JButton("4 joueurs");
+			jbStart4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStart4.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -436,6 +448,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbStart4);
 
 			JButton jbStart5 = new JButton("5 joueurs");
+			jbStart5.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStart5.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -446,6 +459,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbStart5);
 
 			JButton jbStart6 = new JButton("6 joueurs");
+			jbStart6.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStart6.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -456,6 +470,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			pane.add(jbStart6);
 
 			JButton jbCancel = new JButton("Retour");
+			jbCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbCancel.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -490,7 +505,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		if (client.isConnected()) {
+		if (client.isAuthenticated()) {
 			client.send(Message.DECONNECT);
 		}
 

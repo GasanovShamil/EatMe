@@ -47,13 +47,23 @@ public class Queue {
 		test(numberOfPlayers, users);
 	}
 
-	private void test(int numberOfPlayers, ArrayList<User> users) {
+	
+	
+	private void connectionTest(ArrayList<User> users){
+		ArrayList<User> remove=new ArrayList<User>();
 		for (int i = 0; i < users.size(); i++) {
-			User user = null;
-			if (users.get(i).isDeconnected()) {
-				users.remove(i);
+			User user=users.get(i);
+			if (!user.isConnected()) {
+				remove.add(user);	
 			}
 		}
+		for(int i=0;i<remove.size();i++){
+			users.remove(remove.get(i));
+		}
+	}
+	
+	private void test(int numberOfPlayers, ArrayList<User> users) {
+		connectionTest(users);
 		
 		if (users.size() == numberOfPlayers) {
 			Player[] players = new Player[numberOfPlayers];

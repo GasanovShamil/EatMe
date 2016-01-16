@@ -20,6 +20,7 @@ public class ClientConsole {
 		Client client = null;
 		boolean flag = false;
 		boolean inGame = false;
+		boolean test = false;
 		client = new Client();
 		// port = 9443
 		do {
@@ -61,7 +62,17 @@ public class ClientConsole {
 			System.out.print("Entrez votre mot de passe : ");
 			String password = keyboard.readLine();
 
-			System.out.println(client.connect(type, username, password));
+			Message msg = client.connect(type, username, password);
+
+			if (msg == Message.SUCCESS) {
+				System.out.println("Vous êtes connecté sur le serveur.");
+			} else if (msg == Message.FAIL) {
+
+				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
+			} else if (msg == Message.EXIST) {
+
+				System.out.println("L'utilisateur \"" + username + "\" existe deja");
+			}
 			flag = client.isConnected();
 		}
 

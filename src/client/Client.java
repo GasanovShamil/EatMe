@@ -105,17 +105,15 @@ public class Client {
 	}
 
 	public void send(Object obj) {
-		if (isConnected()) {
-			try {
-				output.writeObject(obj);
-				Thread.sleep(1000);
-				output.flush();
-				output.reset();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+		try {
+			output.writeObject(obj);
+			Thread.sleep(1000);
+			output.flush();
+			output.reset();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -145,30 +143,15 @@ public class Client {
 		return flag;
 	}
 
-	public String connect(Message type, String username, String password) {
-		String result = "";
-
-		try {
-			send(new ConnectionBean(type, username, password));
-			msg = (Message) recieve();
-
-			if (msg == Message.SUCCESS) {
-				connected = true;
-				this.username = username;
-				result = "Vous êtes connecté sur le serveur.";
-			} else if (msg == Message.FAIL) {
-				connected = false;
-				result = "Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.";
-			} else if (msg == Message.EXIST) {
-				connected = false;
-				result = "L'utilisateur \"" + username + "\" existe deja";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public Message connect(Message type, String username, String password) {
+		send(new ConnectionBean(type, username, password));
+		msg = (Message) recieve();
+		if (msg == Message.SUCCESS) {
+			connected = true;
+			this.username = username;
+		} else {
 			connected = false;
-			result = "Un problème est survenu lors de votre tentative de connexion, réessayer plus tard.";
 		}
-
-		return result;
+		return msg;
 	}
 }

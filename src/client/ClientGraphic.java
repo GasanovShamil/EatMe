@@ -586,7 +586,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		
-		//LA ON GERE LA DECONEXION
+		client.send(ConnectionMessageType.LEAVE);
 		
 		e.getWindow().setVisible(false);
 		System.exit(0);

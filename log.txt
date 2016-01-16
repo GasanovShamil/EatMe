@@ -1,4 +1,4 @@
-janv. 15, 2016 7:58:46 PM server.Server main
-INFOS: Server started at 134.157.121.175:9443
-janv. 15, 2016 7:58:58 PM server.ServerAcceptThread run
+janv. 16, 2016 1:56:23 AM server.Server main
+INFOS: Server started at 192.168.1.18:9443
+janv. 16, 2016 1:56:43 AM server.ServerAcceptThread run
 AVERTISSEMENT: new connection recieved

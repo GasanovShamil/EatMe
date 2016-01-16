@@ -14,7 +14,7 @@ import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 
 public class Server {
-	private static Logger log = Logger.getLogger(Server.class.getName());
+	//private static Logger log = Logger.getLogger(Server.class.getName());
 	private static ArrayList<ServerUserThread> users;
 	private static Queue queue;
 	private static boolean flag = false;
@@ -22,12 +22,12 @@ public class Server {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		setConf();
-		LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
+		//LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
 		users = new ArrayList<ServerUserThread>();
 		queue = new Queue();
 		InetAddress addr = InetAddress.getLocalHost();
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue);
-		log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
+		//log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		System.out.println("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));

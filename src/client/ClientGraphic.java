@@ -108,9 +108,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case WAITING:
-			pane.add(getLogoPanel(), BorderLayout.WEST);
-			pane.add(getWaitingPanel(), BorderLayout.CENTER);
-			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	
 			break;
 
 		case INGAME:

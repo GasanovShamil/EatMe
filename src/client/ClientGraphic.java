@@ -112,7 +112,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case INGAME:
-			System.out.println("Start");
+			pane.add(getIngamePanel(), BorderLayout.CENTER);
 			break;
 
 		default:
@@ -122,20 +122,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		setContentPane(pane);
 		refresh();
-		
-		if (mode == Mode.WAITING){
-			try {
-				Thread.sleep(20000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			System.out.println("Waiting");
+
+		if (mode == Mode.WAITING) {
 			players = (Player[]) client.recieve();
-			System.out.println("J'attend");
+			switchMode(Mode.INGAME);
 		}
 	}
 
 	private void refresh() {
+		System.out.println("SA REFRESH LA");
 		validate();
 		repaint();
 	}
@@ -319,7 +314,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			}
 		});
 		pane.add(jbSubscribe);
-		
+
 		JButton jbCancel = new JButton("Retour");
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
@@ -373,7 +368,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						check = false;
 						switchMode(mode);
 					}
-					switchMode(Mode.MENU);
 				} else {
 					error = "Champs obligatoire !";
 					switchMode(mode);
@@ -381,7 +375,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			}
 		});
 		pane.add(jbConnect);
-		
+
 		JButton jbCancel = new JButton("Retour");
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
@@ -483,6 +477,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		JLabel jlImage = new JLabel(image);
 		pane.add(jlImage);
 
+		return pane;
+	}
+
+	private JPanel getIngamePanel() {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
+
+		pane.add(new JLabel("In game"));
 		return pane;
 	}
 

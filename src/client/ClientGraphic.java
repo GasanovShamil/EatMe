@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,7 +28,7 @@ import javax.swing.border.Border;
 import client.Client;
 import enums.*;
 
-public class ClientGraphic extends JFrame {
+public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel paneLogo = new JPanel();
 	private JPanel paneChoice = new JPanel();
@@ -61,12 +63,13 @@ public class ClientGraphic extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		setVisible(true);
 
 		init();
 		switchMode(Mode.DEFAULT);
+		this.addWindowListener(this);
 	}
 
 	private void init() {
@@ -484,14 +487,17 @@ public class ClientGraphic extends JFrame {
 
 		JButton buttStart3 = new JButton("Lancer Une Partie à 3");
 		JButton buttStart4 = new JButton("Lancer Une Partie à 4");
+		JButton buttStart5 = new JButton("Lancer Une Partie à 5");
 		JButton buttStart6 = new JButton("Lancer Une Partie à 6");
 
 		buttStart3.setPreferredSize(new Dimension(500, 500));
 		buttStart4.setPreferredSize(new Dimension(500, 500));
+		buttStart5.setPreferredSize(new Dimension(500, 500));
 		buttStart6.setPreferredSize(new Dimension(500, 500));
 
 		paneStartGame.add(buttStart3);
 		paneStartGame.add(buttStart4);
+		paneStartGame.add(buttStart5);
 		paneStartGame.add(buttStart6);
 
 		buttStart3.addActionListener(new ActionListener() {
@@ -514,6 +520,18 @@ public class ClientGraphic extends JFrame {
 
 			}
 		});
+		
+		buttStart5.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				client.send(StartGameType.START_5P);
+
+				// container.add(displayPaneWaintingRound(),
+				// BorderLayout.CENTER);
+
+			}
+		});
+		
 		buttStart6.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -551,5 +569,50 @@ public class ClientGraphic extends JFrame {
 
 	public static void main(String[] args) throws IOException {
 		new ClientGraphic();
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		
+		//LA ON GERE LA DECONEXION
+		
+		e.getWindow().setVisible(false);
+		System.exit(0);
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

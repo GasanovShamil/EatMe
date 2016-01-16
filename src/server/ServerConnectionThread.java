@@ -52,7 +52,9 @@ public class ServerConnectionThread extends Thread {
 				user = authenticate();
 			} else if (connectionBean.getType() == ConnectionMessageType.CREATE_ACCOUNT) {
 				user = createAccount();
-			} 
+			} else if(connectionBean.getType() == ConnectionMessageType.LEAVE){
+				interrupt();
+			}
 			if (user != null) {
 				synchronized (queue) {
 					serverUserThread = new ServerUserThread(user, queue);

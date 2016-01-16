@@ -108,15 +108,17 @@ public class Client {
 	}
 
 	public void send(Object obj) {
-		try {
-			output.writeObject(obj);
-			Thread.sleep(1000);
-			output.flush();
-			output.reset();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (isConnected()) {
+			try {
+				output.writeObject(obj);
+				Thread.sleep(1000);
+				output.flush();
+				output.reset();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -141,7 +143,7 @@ public class Client {
 				input = new ObjectInputStream(socket.getInputStream());
 			}
 		} catch (IOException e) {
-			flag=false;
+			flag = false;
 		}
 		return flag;
 	}

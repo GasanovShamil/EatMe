@@ -112,6 +112,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case INGAME:
+			pane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	
 			pane.add(getIngamePanel(), BorderLayout.CENTER);
 			break;
 

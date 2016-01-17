@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -131,7 +132,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	}
 
 	private void refresh() {
-		System.out.println("SA REFRESH LA");
 		validate();
 		repaint();
 	}
@@ -441,7 +441,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					client.send(Message.START_4P);
-					switchMode(mode);
+					switchMode(Mode.WAITING);
 				}
 			});
 			pane.add(jbStart4);
@@ -452,7 +452,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					client.send(Message.START_5P);
-					switchMode(mode);
+					switchMode(Mode.WAITING);
 				}
 			});
 			pane.add(jbStart5);
@@ -463,7 +463,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					client.send(Message.START_6P);
-					switchMode(mode);
+					switchMode(Mode.WAITING);
 				}
 			});
 			pane.add(jbStart6);
@@ -493,12 +493,28 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		return pane;
 	}
+	
+	private JPanel getPlayerPanel(Player player){
+		JPanel pane = new JPanel();
+		
+		return pane;
+	}
 
 	private JPanel getIngamePanel() {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
+		int size = players.length;
+		if (size == 4){
+			size = 3;
+		}
+		if (size == 6){
+			size = 5;
+		}
+		pane.setLayout(new GridLayout(size, size));
+		
+		pane.add(new JLabel());
 
-		pane.add(new JLabel("In game"));
+		
 		return pane;
 	}
 

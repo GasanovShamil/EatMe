@@ -14,6 +14,7 @@ public class ClientConsole {
 	public static void main(String[] args) throws IOException {
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
+		
 		System.out.println("*************************************");
 		System.out.println("* Bienvenue Sur Eat Me If You Can ! *");
 		System.out.println("*************************************\n");

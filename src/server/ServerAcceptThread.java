@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -11,11 +12,13 @@ public class ServerAcceptThread extends Thread {
 	private Queue queue;
 	private ServerSocket serverSocket;
 	private ServerConnectionThread serverConnectionThread;
+	private Connection dbConnection;
 	//private static Logger log = Logger.getLogger(ServerAcceptThread.class.getName());
 	
-	public ServerAcceptThread(int port, ArrayList<ServerUserThread> users, Queue queue) throws IOException {
+	public ServerAcceptThread(int port, ArrayList<ServerUserThread> users, Queue queue, Connection dbConnection) throws IOException {
 		this.users = users;
 		this.queue = queue;
+		this.dbConnection=dbConnection;
 		serverSocket = new ServerSocket(port);
 	}
 
@@ -25,7 +28,7 @@ public class ServerAcceptThread extends Thread {
 			try {
 				socket = serverSocket.accept();
 				synchronized (queue) {
-					serverConnectionThread = new ServerConnectionThread(socket, users, queue);
+					serverConnectionThread = new ServerConnectionThread(socket, users, queue,dbConnection);
 				}
 				//log.warning("new connection recieved");
 				serverConnectionThread.start();

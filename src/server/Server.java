@@ -6,7 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -19,14 +23,26 @@ public class Server {
 	private static Queue queue;
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
-
+	
+	
 	public static void main(String[] args) throws IOException, InterruptedException {
+		Connection dbConnection=null;
 		setConf();
 		//LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
 		users = new ArrayList<ServerUserThread>();
 		queue = new Queue();
 		InetAddress addr = InetAddress.getLocalHost();
-		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue);
+		Properties prop = new Properties();
+		prop.put("characterEncoding", "UTF8");
+		prop.put("user", "root");
+		prop.put("password", "root");
+		try {
+			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
+		} catch (SQLException e) {
+			System.out.println("Pas de connection sur la BD");
+			System.exit(1);
+		}
+		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue, dbConnection);
 		//log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		System.out.println("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		sat.start();

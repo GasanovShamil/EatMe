@@ -18,27 +18,27 @@ public class ServerUserThread extends Thread {
 
 			switch (msg) {
 			case START_3P:
-				System.out.println(user.getUsername() + " need game 3 p");
 				synchronized (queue) {
 					queue.addUser(3, user);
+					System.out.println(user.getUsername() + " need game 3 p");
 				}
 				break;
 			case START_4P:
-				System.out.println(user.getUsername() + " need game 4 p");
 				synchronized (queue) {
 					queue.addUser(4, user);
+					System.out.println(user.getUsername() + " need game 4 p");
 				}
 				break;
 			case START_5P:
-				System.out.println(user.getUsername() + " need game 5 p");
 				synchronized (queue) {
 					queue.addUser(5, user);
+					System.out.println(user.getUsername() + " need game 5 p");
 				}
 				break;
 			case START_6P:
-				System.out.println(user.getUsername() + " need game 6 p");
 				synchronized (queue) {
 					queue.addUser(6, user);
+					System.out.println(user.getUsername() + " need game 6 p");
 				}
 				break;
 			case DECONNECT:

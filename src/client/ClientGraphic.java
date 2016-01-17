@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -39,7 +41,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	private boolean check;
 
 	private Client client;
-	private Player[] players;
 
 	public ClientGraphic() {
 		super("Eat Me If You Can !");
@@ -65,7 +66,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		password = "";
 		check = true;
 		client = new Client();
-		players = null;
 
 		switchMode(Mode.DEFAULT);
 	}
@@ -109,11 +109,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case WAITING:
-			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));	
+			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			break;
 
 		case INGAME:
-			pane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));	
+			pane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			pane.add(getIngamePanel(), BorderLayout.CENTER);
 			break;
 
@@ -126,7 +126,8 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		refresh();
 
 		if (mode == Mode.WAITING) {
-			players = (Player[]) client.recieve();
+			client.startRound((Player[]) client.recieve());
+
 			switchMode(Mode.INGAME);
 		}
 	}
@@ -355,7 +356,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jpfPassword.setPreferredSize(new Dimension(550, 25));
 		jlPassword.setForeground(colorPasswords);
 		pane.add(jpfPassword);
-		
+
 		JButton jbConnect = new JButton("Se connecter");
 		jbConnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		jbConnect.addActionListener(new ActionListener() {
@@ -493,28 +494,56 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 		return pane;
 	}
-	
-	private JPanel getPlayerPanel(Player player){
+
+	private JPanel getPlayerPanel(Player player) {
 		JPanel pane = new JPanel();
-		
+		pane.setPreferredSize(new Dimension(150, 150));
+		pane.setLayout(new GridLayout(3, 1));
+		pane.setBackground(Color.CYAN);
+
+		ImageIcon image = new ImageIcon("img/loading.gif");
+		JLabel jlRole = new JLabel(player.getRole().getName());
+		pane.add(jlRole);
+
+		JLabel jlUsername = new JLabel(player.getUsername());
+		pane.add(jlUsername);
+
+		JLabel jlPoints = new JLabel("" + player.getPoints());
+		pane.add(jlPoints);
+
 		return pane;
 	}
 
 	private JPanel getIngamePanel() {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
-		int size = players.length;
-		if (size == 4){
-			size = 3;
-		}
-		if (size == 6){
-			size = 5;
-		}
-		pane.setLayout(new GridLayout(size, size));
-		
-		pane.add(new JLabel());
+		pane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridheight = 150;
+		c.gridwidth = 100;
 
-		
+		c.gridx = 2;
+		c.gridy = 1;
+		pane.add(getPlayerPanel(client.getPlayer()), c);
+
+		int cpt = 1;
+		Player[] players = client.getPlayers();
+		for (int i = 0; i < players.length; i++) {
+			if (i != client.getPosition()) {
+				c.fill = GridBagConstraints.HORIZONTAL;
+				if (cpt == 1) {
+					c.gridx = 1;
+					c.gridy = 0;
+				} else if (cpt == 2) {
+					c.gridx = 1;
+					c.gridy = 2;
+				}
+				pane.add(getPlayerPanel(players[i]), c);
+				cpt++;
+			}
+		}
+
 		return pane;
 	}
 

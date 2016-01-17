@@ -36,10 +36,10 @@ public class ClientConsole {
 			}
 		} while (!flag);
 
-		Message type = null;
 		flag = false;
 
 		while (!flag) {
+			Message type = null;
 			while (type == null) {
 				System.out.print("\n1/ S'inscrire" + "\n2/ Se connecter" + "\n3/ Quiter" + "\nVotre choix : ");
 				String choix = keyboard.readLine();
@@ -59,6 +59,7 @@ public class ClientConsole {
 					break;
 				}
 			}
+			
 			System.out.print("\nEntrez votre username : ");
 			String username = keyboard.readLine();
 			System.out.print("Entrez votre mot de passe : ");
@@ -69,13 +70,12 @@ public class ClientConsole {
 			if (msg == Message.SUCCESS) {
 				System.out.println("Vous êtes connecté sur le serveur.");
 			} else if (msg == Message.FAIL) {
-
 				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
 			} else if (msg == Message.EXIST) {
-
 				System.out.println("L'utilisateur \"" + username + "\" existe deja");
 			}
 			flag = client.isAuthenticated();
+			System.out.println(flag);
 		}
 
 		flag = false;
@@ -86,6 +86,7 @@ public class ClientConsole {
 					+ "\n3/ Lancer une partie à 5 joueurs" + "\n4/ Lancer une partie à 6 joueurs" + "\n999/ Déconnexion"
 					+ "\nVotre choix : ");
 			String choix = keyboard.readLine();
+			
 			switch (choix) {
 			case "1":
 				connectionCheck = client.send(Message.START_3P);

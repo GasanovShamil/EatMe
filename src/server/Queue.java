@@ -47,24 +47,22 @@ public class Queue {
 		checkStart(numberOfPlayers, users);
 	}
 
-	
-	
-	private void connectionTest(ArrayList<User> users){
-		ArrayList<User> remove=new ArrayList<User>();
+	private void connectionTest(ArrayList<User> users) {
+		ArrayList<User> remove = new ArrayList<User>();
 		for (int i = 0; i < users.size(); i++) {
-			User user=users.get(i);
+			User user = users.get(i);
 			if (!user.isConnected()) {
-				remove.add(user);	
+				remove.add(user);
 			}
 		}
-		for(int i=0;i<remove.size();i++){
+		for (int i = 0; i < remove.size(); i++) {
 			users.remove(remove.get(i));
 		}
 	}
-	
+
 	private void checkStart(int numberOfPlayers, ArrayList<User> users) {
 		connectionTest(users);
-		
+
 		if (users.size() == numberOfPlayers) {
 			Player[] players = new Player[numberOfPlayers];
 			for (int i = 0; i < players.length; i++) {
@@ -73,7 +71,7 @@ public class Queue {
 			System.out.println("New Game");
 			Game game = new Game(players);
 			game.start();
-			users = new ArrayList<User>();
+			users.removeAll(users);
 		}
 	}
 }

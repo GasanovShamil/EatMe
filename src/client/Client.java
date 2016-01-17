@@ -13,13 +13,11 @@ public class Client {
 	ObjectOutputStream output;
 	ObjectInputStream input;
 	private String username;
-	private Message msg;
 	private boolean authenticated;
 	private Player[] players;
 	private int position;
 
 	public Client() {
-		msg = Message.NULL;
 		authenticated = false;
 	}
 
@@ -88,8 +86,6 @@ public class Client {
 		}
 
 		return send(players[position].getRole());
-
-		
 	}
 
 	public int getRoundPoints() {
@@ -99,11 +95,23 @@ public class Client {
 	public String getUsername() {
 		return username;
 	}
+	
+	public int getPosition() {
+		return position;
+	}
 
 	public boolean isAuthenticated() {
 		return authenticated;
 	}
 
+	public Player getPlayer(){
+		return players[position];
+	}
+	
+	public Player[] getPlayers(){
+		return players;
+	}
+	
 	public boolean isConnected() {
 		boolean flag = true;
 		try {
@@ -157,7 +165,7 @@ public class Client {
 
 	public Message connect(Message type, String username, String password) {
 		send(new ConnectionBean(type, username, password));
-		msg = (Message) recieve();
+		 Message msg = (Message) recieve();
 		if (msg == Message.SUCCESS) {
 			authenticated = true;
 			this.username = username;
@@ -166,5 +174,4 @@ public class Client {
 		}
 		return msg;
 	}
-
 }

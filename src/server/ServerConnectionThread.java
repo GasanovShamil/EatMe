@@ -5,12 +5,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import client.ConnectionBean;
 import enums.Message;
@@ -25,11 +23,12 @@ public class ServerConnectionThread extends Thread {
 	private ConnectionBean connectionBean = null;
 	private Socket socket = null;
 	private ServerUserThread serverUserThread = null;
-
-	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue) {
+	
+	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue, Connection dbConnection) {
 		this.users = users;
 		this.socket = socket;
 		this.queue = queue;
+		this.dbConnection=dbConnection;
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
@@ -40,37 +39,37 @@ public class ServerConnectionThread extends Thread {
 	}
 
 	public void run() {
-		try {
-			Properties prop = new Properties();
-			prop.put("characterEncoding", "UTF8");
-			prop.put("user", "root");
-			prop.put("password", "root");
-			dbConnection = DriverManager.getConnection("jdbc:mysql://localhost:3306/eatme", prop);
-			User user = null;
-			connectionBean = (ConnectionBean) input.readObject();
-			if (connectionBean.getType() == Message.AUTHENTICATE) {
-				user = authenticate();
-			} else if (connectionBean.getType() == Message.CREATE_ACCOUNT) {
-				user = createAccount();
-			} 
-			if (user != null) {
-				synchronized (queue) {
-					serverUserThread = new ServerUserThread(user, queue);
+		
+		while (!isInterrupted()) {
+			try {
+				
+				User user = null;
+				connectionBean = (ConnectionBean) input.readObject();
+				if (connectionBean.getType() == Message.AUTHENTICATE) {
+					user = authenticate();
+				} else if (connectionBean.getType() == Message.CREATE_ACCOUNT) {
+					user = createAccount();
 				}
-				serverUserThread.start();
-				synchronized (users) {
-					users.add(serverUserThread);
+				if (user != null) {
+					synchronized (queue) {
+						serverUserThread = new ServerUserThread(user, queue);
+					}
+					serverUserThread.start();
+					synchronized (users) {
+						users.add(serverUserThread);
+					}
+					
+					interrupt();
 				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				interrupt();
 			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-
 	}
 
 	/**

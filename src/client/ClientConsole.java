@@ -14,7 +14,6 @@ public class ClientConsole {
 	public static void main(String[] args) throws IOException {
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
-		
 		System.out.println("*************************************");
 		System.out.println("* Bienvenue Sur Eat Me If You Can ! *");
 		System.out.println("*************************************\n");
@@ -23,6 +22,7 @@ public class ClientConsole {
 		boolean flag = false;
 		boolean inGame = false;
 		boolean test = false;
+		boolean connectionCheck = false;
 		client = new Client();
 		// port = 9443
 		do {
@@ -88,28 +88,29 @@ public class ClientConsole {
 			String choix = keyboard.readLine();
 			switch (choix) {
 			case "1":
-				client.send(Message.START_3P);
+				connectionCheck = client.send(Message.START_3P);
 				inGame = true;
 				break;
 
 			case "2":
-				client.send(Message.START_4P);
+				connectionCheck = client.send(Message.START_4P);
 				inGame = true;
 				break;
 
 			case "3":
-				client.send(Message.START_5P);
+				connectionCheck = client.send(Message.START_5P);
 				inGame = true;
 				break;
 
 			case "4":
-				client.send(Message.START_6P);
+				connectionCheck = client.send(Message.START_6P);
 				inGame = true;
 				break;
 
 			case "999":
-				client.send(Message.DECONNECT);
+				connectionCheck = client.send(Message.DECONNECT);
 				flag = true;
+				inGame = false;
 				break;
 
 			default:
@@ -117,8 +118,10 @@ public class ClientConsole {
 				break;
 			}
 
-			if (inGame) {
+			if (inGame && connectionCheck) {
 				System.out.println("En attente d'une partie ...");
+			} else {
+				System.out.println("DECONNECTED");
 			}
 
 			while (inGame) {
@@ -129,17 +132,12 @@ public class ClientConsole {
 					System.out.println("CONNECTION LOST");
 				} else {
 					Player[] players = (Player[]) obj;
-
 					System.out.println(client.startRound(players));
 					System.out.print("Votre choix : ");
-					System.out.println(client.doAction(keyboard.readLine()));
+					if (client.doAction(keyboard.readLine())) {
 
-					Message message = (Message) client.recieve();
-					if (message == Message.CONNECTION_LOST) {
-						inGame = false;
-						flag = true;
-						System.out.println("CONNECTION LOST");
-					} else {
+						Message message = (Message) client.recieve();
+
 						switch (message) {
 						case GAME_END_LOSER:
 							System.out.println("LOSER");
@@ -183,13 +181,23 @@ public class ClientConsole {
 							break;
 
 						case ROUND_END_WINNER:
-							System.out.println("+" + client.getRoundPoints());
+							System.out.println("+" + client.getRoundPoints() + " pts");
+							break;
+
+						case CONNECTION_LOST:
+							inGame = false;
+							flag = true;
+							System.out.println("CONNECTION LOST");
 							break;
 
 						default:
 							System.out.println("NE ZA CHTO");
 							break;
 						}
+					}else{
+						System.out.println("CONNECTION LOST");
+						inGame = false;
+						flag = true;
 					}
 				}
 			}

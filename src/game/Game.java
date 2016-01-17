@@ -28,7 +28,9 @@ public class Game extends Thread {
 				send(Message.GAME_END_WINNER, winner);
 				send(Message.GAME_END_LOSER, gameLosers);
 				for (int i = 0; i < players.length; i++) {
+					System.out.println("Partie fini");
 					players[i].notifyUser();
+					System.out.println("J'ai notify");
 				}
 				interrupt();
 			} else {
@@ -84,7 +86,7 @@ public class Game extends Thread {
 		int check = -1;
 
 		for (Player player : players) {
-			if (player.getPoints() >= 10) {
+			if (player.getPoints() >= 5) {
 				winners.add(player.getPosition());
 			}
 		}

@@ -44,7 +44,7 @@ public class Queue {
 		}
 
 		users.add(user);
-		test(numberOfPlayers, users);
+		checkStart(numberOfPlayers, users);
 	}
 
 	
@@ -62,7 +62,7 @@ public class Queue {
 		}
 	}
 	
-	private void test(int numberOfPlayers, ArrayList<User> users) {
+	private void checkStart(int numberOfPlayers, ArrayList<User> users) {
 		connectionTest(users);
 		
 		if (users.size() == numberOfPlayers) {

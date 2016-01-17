@@ -65,8 +65,8 @@ public class Client {
 		return options;
 	}
 
-	public String doAction(String choix) {
-		String action = "";
+	public boolean doAction(String choix) {
+		
 		Role me = players[position].getRole();
 
 		if (me.isWolf()) {
@@ -75,21 +75,21 @@ public class Client {
 			switch (choix) {
 			case "1":
 				((Innocent) (me)).sleep();
-				action = "Vous dormez.";
+				System.out.println("Vous dormez.");
 				break;
 			case "2":
 				((Innocent) (me)).putTrap();
-				action = "Vous posez un piège.";
+				System.out.println("Vous posez un piège.");
 				break;
 			default:
-				action = "NEIN.";
+				System.out.println("NEIN.");
 				break;
 			}
 		}
 
-		send(players[position].getRole());
+		return send(players[position].getRole());
 
-		return action;
+		
 	}
 
 	public int getRoundPoints() {
@@ -114,17 +114,19 @@ public class Client {
 		return flag;
 	}
 
-	public void send(Object obj) {
+	public boolean send(Object obj) {
+		boolean flag = true;
 		try {
 			output.writeObject(obj);
 			Thread.sleep(1000);
 			output.flush();
 			output.reset();
 		} catch (IOException e) {
-			e.printStackTrace();
+			flag = false;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		return flag;
 	}
 
 	public Object recieve() {

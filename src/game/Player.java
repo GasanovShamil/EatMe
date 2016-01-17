@@ -27,12 +27,12 @@ public class Player implements Serializable {
 	public void setRole(Role role) {
 		this.role = role;
 	}
-	
-	public int getPosition(){
+
+	public int getPosition() {
 		return position;
 	}
-	
-	public int getPoints(){
+
+	public int getPoints() {
 		return points;
 	}
 
@@ -49,12 +49,18 @@ public class Player implements Serializable {
 		return (role instanceof Innocent) ? ((Innocent) role).getValue()
 				: ((Innocent) ((Wolf) role).getTarget().role).getValue();
 	}
-	
-	public void send(Object message){
+
+	public void send(Object message) {
 		user.send(message);
 	}
 
-	public Object recieve(){
+	public Object recieve() {
 		return user.recieve();
+	}
+
+	public void notifyUser() {
+		synchronized (user) {
+			this.user.notifyAll();
+		}
 	}
 }

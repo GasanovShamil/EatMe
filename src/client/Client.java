@@ -107,7 +107,7 @@ public class Client {
 	public boolean isConnected() {
 		boolean flag = true;
 		try {
-			socket.sendUrgentData(0);
+			socket.sendUrgentData(10);
 		} catch (IOException e) {
 			flag = false;
 		}

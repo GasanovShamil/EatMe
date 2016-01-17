@@ -27,6 +27,9 @@ public class Game extends Thread {
 			if (winner != -1) {
 				send(Message.GAME_END_WINNER, winner);
 				send(Message.GAME_END_LOSER, gameLosers);
+				for (int i = 0; i < players.length; i++) {
+					players[i].notifyUser();
+				}
 				interrupt();
 			} else {
 				send(Message.ROUND_END_WINNER, roundWinners);
@@ -34,7 +37,7 @@ public class Game extends Thread {
 				send(Message.ROUND_END_LOSER, roundLoser);
 				setRoles((Role[]) players[roundLoser].recieve());
 				for (int i = 0; i < players.length; i++) {
-					System.out.println(players[i].getUsername()+" : "+players[i].getRole());
+					System.out.println(players[i].getUsername() + " : " + players[i].getRole());
 				}
 			}
 		}
@@ -123,7 +126,7 @@ public class Game extends Thread {
 				}
 			}
 		}
-		
+
 		if (check != -1) {
 			gameLosers = new ArrayList<Integer>();
 			for (int i = 0; i < players.length; i++) {
@@ -131,7 +134,7 @@ public class Game extends Thread {
 					gameLosers.add(i);
 			}
 		}
-		
+
 		return check;
 	}
 
@@ -183,5 +186,5 @@ public class Game extends Thread {
 			players[i].setRole(roles[i]);
 		}
 	}
-	
+
 }

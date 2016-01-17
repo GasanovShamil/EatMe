@@ -9,42 +9,52 @@ public class ServerUserThread extends Thread {
 
 	public ServerUserThread(User user, Queue queue) {
 		this.user = user;
-		this.queue=queue;
+		this.queue = queue;
 	}
 
 	public void run() {
-		Message msg = (Message) user.recieve();
+		while (!isInterrupted()) {
+			Message msg = (Message) user.recieve();
 
-		switch (msg) {
-		case START_3P:
-			System.out.println(user.getUsername()+" need game 3 p");
-			synchronized(queue){
-				queue.addUser(3, user);
+			switch (msg) {
+			case START_3P:
+				System.out.println(user.getUsername() + " need game 3 p");
+				synchronized (queue) {
+					queue.addUser(3, user);
+				}
+				break;
+			case START_4P:
+				System.out.println(user.getUsername() + " need game 4 p");
+				synchronized (queue) {
+					queue.addUser(4, user);
+				}
+				break;
+			case START_5P:
+				System.out.println(user.getUsername() + " need game 5 p");
+				synchronized (queue) {
+					queue.addUser(5, user);
+				}
+				break;
+			case START_6P:
+				System.out.println(user.getUsername() + " need game 6 p");
+				synchronized (queue) {
+					queue.addUser(6, user);
+				}
+				break;
+			case DECONNECT:
+				//interrupt();
+				break;
+			default:
+				break;
 			}
-			break;
-		case START_4P:
-			System.out.println(user.getUsername()+" need game 4 p");
-			synchronized(queue){
-				queue.addUser(4, user);
+			
+			synchronized(user){
+				try {
+					user.wait();
+				} catch (InterruptedException e) {
+					System.out.println("ServerUserThread : Connection lost - "+ user.getUsername());
+				}
 			}
-			break;
-		case START_5P:
-			System.out.println(user.getUsername()+" need game 5 p");
-			synchronized(queue){
-				queue.addUser(5, user);
-			}
-			break;
-		case START_6P:
-			System.out.println(user.getUsername()+" need game 6 p");
-			synchronized(queue){
-				queue.addUser(6, user);
-			}
-			break;
-		case DECONNECT:
-			interrupt();
-			break;
-		default:
-			break;
 		}
 	}
 }

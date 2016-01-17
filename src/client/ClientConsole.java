@@ -10,6 +10,7 @@ import game.Player;
 import game.Role;
 
 public class ClientConsole {
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) throws IOException {
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
@@ -120,56 +121,75 @@ public class ClientConsole {
 			}
 
 			while (inGame) {
-				Player[] players = (Player[]) client.recieve();
-				System.out.println(client.startRound(players));
-				System.out.print("Votre choix : ");
-				System.out.println(client.doAction(keyboard.readLine()));
-
-				Message message = (Message) client.recieve();
-
-				switch (message) {
-				case GAME_END_LOSER:
-					System.out.println("LOSER");
+				Object obj = client.recieve();
+				if (obj instanceof Message && ((Message) obj).CONNECTION_LOST == Message.CONNECTION_LOST) {
 					inGame = false;
-					break;
+					flag = true;
+					System.out.println("CONNECTION LOST");
+				} else {
+					Player[] players = (Player[]) obj;
 
-				case GAME_END_WINNER:
-					System.out.println("WINNER");
-					inGame = false;
-					break;
+					System.out.println(client.startRound(players));
+					System.out.print("Votre choix : ");
+					System.out.println(client.doAction(keyboard.readLine()));
 
-				case ROUND_END_LOSER:
-					System.out.println("-" + client.getRoundPoints());
-					System.out.println("ATTRIB ROLE !");
+					Message message = (Message) client.recieve();
+					if (message == Message.CONNECTION_LOST) {
+						inGame = false;
+						flag = true;
+						System.out.println("CONNECTION LOST");
+					} else {
+						switch (message) {
+						case GAME_END_LOSER:
+							System.out.println("LOSER");
+							inGame = false;
+							break;
 
-					ArrayList<Role> listRoles = Role.generateRoles(players.length);
-					Role[] roles = new Role[players.length];
+						case GAME_END_WINNER:
+							System.out.println("WINNER");
+							inGame = false;
+							break;
 
-					for (int i = 0; i < players.length - 1; i++) {
-						System.out.println("Role de : " + players[i].getUsername() + " ?");
-						for (int j = 0; j < listRoles.size(); j++) {
-							System.out.println(j + "/ " + listRoles.get(j).getName());
+						case ROUND_END_LOSER:
+							System.out.println("-" + client.getRoundPoints());
+							System.out.println("ATTRIB ROLE !");
+
+							ArrayList<Role> listRoles = Role.generateRoles(players.length);
+							Role[] roles = new Role[players.length];
+
+							for (int i = 0; i < players.length - 1; i++) {
+								System.out.println("Role de : " + players[i].getUsername() + " ?");
+								for (int j = 0; j < listRoles.size(); j++) {
+									System.out.println(j + "/ " + listRoles.get(j).getName());
+								}
+								System.out.print("Votre choix : ");
+								Role role = listRoles.get(Integer.parseInt(keyboard.readLine()));
+								roles[i] = role;
+								listRoles.remove(role);
+							}
+							roles[roles.length - 1] = listRoles.get(0);
+							if (client.isConnected()) {
+								client.send(roles);
+							} else {
+								System.out.println("CONNECTION LOST");
+								inGame = false;
+								flag = true;
+							}
+							break;
+
+						case ROUND_END_NEUTRAL:
+							System.out.println("0 pts");
+							break;
+
+						case ROUND_END_WINNER:
+							System.out.println("+" + client.getRoundPoints());
+							break;
+
+						default:
+							System.out.println("NE ZA CHTO");
+							break;
 						}
-						System.out.print("Votre choix : ");
-						Role role = listRoles.get(Integer.parseInt(keyboard.readLine()));
-						roles[i] = role;
-						listRoles.remove(role);
 					}
-					roles[roles.length - 1] = listRoles.get(0);
-					client.send(roles);
-					break;
-
-				case ROUND_END_NEUTRAL:
-					System.out.println("0 pts");
-					break;
-
-				case ROUND_END_WINNER:
-					System.out.println("+" + client.getRoundPoints());
-					break;
-
-				default:
-					System.out.println("NE ZA CHTO");
-					break;
 				}
 			}
 		}

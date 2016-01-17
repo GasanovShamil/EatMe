@@ -133,7 +133,7 @@ public class Client {
 		try {
 			result = input.readObject();
 		} catch (ClassNotFoundException | IOException e) {
-			e.printStackTrace();
+			return Message.CONNECTION_LOST;
 		}
 
 		return result;

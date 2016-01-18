@@ -8,6 +8,7 @@ Logiciels nécessaires :
 Prérequis :
   Importer le projet dans Eclipse.
   Lancer le script CreateDB.sql dans la console MySQL.
+  Ajouter les bibliothèques mysql.jar et jdom-2.0.6.jar au répertoire librairies.
 
 Serveur :
   Lancer la classe Server.

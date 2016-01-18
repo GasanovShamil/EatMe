@@ -69,6 +69,8 @@ public class ClientConsole {
 
 			if (msg == Message.SUCCESS) {
 				System.out.println("Vous êtes connecté sur le serveur.");
+			} else if (msg == Message.ALREADY_IN_USE) {
+				System.out.println("Un utilisateur avec cet identifiant est déjà connecté.");
 			} else if (msg == Message.FAIL) {
 				System.out.println("Identifiants incorrects. Si le problème persiste, vérifiez votre connexion.");
 			} else if (msg == Message.EXIST) {

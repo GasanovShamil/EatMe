@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 import client.ConnectionBean;
 import enums.Message;
@@ -23,12 +24,14 @@ public class ServerConnectionThread extends Thread {
 	private ConnectionBean connectionBean = null;
 	private Socket socket = null;
 	private ServerUserThread serverUserThread = null;
-	
-	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue, Connection dbConnection) {
+	private static Logger log = Logger.getLogger(ServerConnectionThread.class.getName());
+
+	public ServerConnectionThread(Socket socket, ArrayList<ServerUserThread> users, Queue queue,
+			Connection dbConnection) {
 		this.users = users;
 		this.socket = socket;
 		this.queue = queue;
-		this.dbConnection=dbConnection;
+		this.dbConnection = dbConnection;
 		try {
 			input = new ObjectInputStream(socket.getInputStream());
 			output = new ObjectOutputStream(socket.getOutputStream());
@@ -39,29 +42,39 @@ public class ServerConnectionThread extends Thread {
 	}
 
 	public void run() {
-		
+
 		while (!isInterrupted()) {
+			boolean connected = true;
 			try {
-				
+				socket.sendUrgentData(10);
+			} catch (IOException e1) {
+				connected = false;
+			}
+
+			try {
 				User user = null;
-				connectionBean = (ConnectionBean) input.readObject();
-				if (connectionBean.getType() == Message.AUTHENTICATE) {
-					user = authenticate();
-				} else if (connectionBean.getType() == Message.CREATE_ACCOUNT) {
-					user = createAccount();
-				}
-				if (user != null) {
-					synchronized (queue) {
-						serverUserThread = new ServerUserThread(user, queue);
+				if (connected) {
+					connectionBean = (ConnectionBean) input.readObject();
+
+					if (connectionBean.getType() == Message.AUTHENTICATE) {
+						user = authenticate();
+					} else if (connectionBean.getType() == Message.CREATE_ACCOUNT) {
+						user = createAccount();
 					}
-					serverUserThread.start();
-					synchronized (users) {
-						users.add(serverUserThread);
+					if (user != null) {
+						synchronized (queue) {
+							serverUserThread = new ServerUserThread(user, queue, users);
+						}
+						serverUserThread.start();
+						synchronized (users) {
+							users.add(serverUserThread);
+						}
+
+						interrupt();
 					}
-					
+				} else {
 					interrupt();
 				}
-
 			} catch (SQLException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -78,31 +91,31 @@ public class ServerConnectionThread extends Thread {
 	 * </p>
 	 * 
 	 * @return Object User s'il y a un utilisateur dans BD et null sinon
+	 * @throws IOException
 	 */
-	public User authenticate() throws SQLException {
+	public User authenticate() throws SQLException, IOException {
 		String query = "SELECT * FROM users WHERE username='" + connectionBean.getLogin() + "' AND password=MD5('"
 				+ connectionBean.getPassword() + "');";
 		Statement statement = dbConnection.createStatement();
 		ResultSet resultSet = statement.executeQuery(query);
 		if (resultSet.next()) {
-			System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
-
-			try {
-				output.writeObject(Message.SUCCESS);
-				output.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
+			for (ServerUserThread sut : users) {
+				if (sut.getUsername().equals(connectionBean.getLogin())) {
+					output.writeObject(Message.ALREADY_IN_USE);
+					output.flush();
+					return null;
+				}
 			}
+			log.info(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
+
+			output.writeObject(Message.SUCCESS);
+			output.flush();
 			return new User(resultSet.getString("username"), socket, input, output);
 		} else {
-			System.out.println("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
+			log.info("Identifiants incorrects. " + connectionBean.getLogin() + "\n Console: ");
 
-			try {
-				output.writeObject(Message.FAIL);
-				output.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			output.writeObject(Message.FAIL);
+			output.flush();
 			return null;
 		}
 	}
@@ -128,7 +141,7 @@ public class ServerConnectionThread extends Thread {
 						+ connectionBean.getPassword() + "');";
 				resultSet = statement.executeQuery(query);
 				resultSet.next();
-				System.out.print(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
+				log.info(resultSet.getString("username") + " vient de se connecter.\nConsole : ");
 
 				output.writeObject(Message.SUCCESS);
 				output.flush();
@@ -138,7 +151,7 @@ public class ServerConnectionThread extends Thread {
 			return new User(resultSet.getString("username"), socket, input, output);
 
 		} else {
-			System.out.println("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
+			log.info("Il y a deja un utilisateur avec ce nom : " + connectionBean.getLogin() + "\nConsole: ");
 			try {
 				output.writeObject(Message.EXIST);
 				output.flush();

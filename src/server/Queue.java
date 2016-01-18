@@ -7,16 +7,18 @@ import game.Player;
 import game.User;
 
 public class Queue {
+	private ArrayList<ServerUserThread> usersThreads;
 	private ArrayList<User> players3;
 	private ArrayList<User> players4;
 	private ArrayList<User> players5;
 	private ArrayList<User> players6;
 
-	public Queue() {
+	public Queue(ArrayList<ServerUserThread> usersThreads) {
 		players3 = new ArrayList<User>();
 		players4 = new ArrayList<User>();
 		players5 = new ArrayList<User>();
 		players6 = new ArrayList<User>();
+		this.usersThreads=usersThreads;
 	}
 
 	public void addUser(int numberOfPlayers, User user) {
@@ -55,8 +57,13 @@ public class Queue {
 				remove.add(user);
 			}
 		}
+			
 		for (int i = 0; i < remove.size(); i++) {
 			users.remove(remove.get(i));
+			for(int j=0;j<usersThreads.size(); j++){
+				usersThreads.get(j).interrupt();
+			}
+			
 		}
 	}
 

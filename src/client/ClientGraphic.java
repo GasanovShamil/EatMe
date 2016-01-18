@@ -428,10 +428,10 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				} else if (!check) {
 					password = "";
 					error = "Les mots de passe ne correspondent pas !";
-					switchMode(mode, 0);
+					switchMode(Mode.DEFAULT, 0);
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(mode, 0);
+					switchMode(Mode.SUBSCRIBE, 0);
 				}
 			}
 		});
@@ -513,7 +513,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 					if (msg == Message.SUCCESS) {
 						ok();
 						switchMode(Mode.MENU, 0);
-					} else {
+					} else if (msg == Message.ALREADY_IN_USE){
+						error = "Un utilisateur est déjà connecté avec cet identifiant.";
+						check = false;
+						switchMode(mode, 0);
+					} else if (msg == Message.FAIL){
 						error = "Identifiants incorrects.";
 						check = false;
 						switchMode(Mode.DEFAULT, 0);

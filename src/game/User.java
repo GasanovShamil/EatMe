@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
+import enums.Message;
+
 @SuppressWarnings("serial")
 public class User implements Serializable {
 	private String username;
@@ -49,17 +51,14 @@ public class User implements Serializable {
 	}
 
 	public Object recieve() {
+		Object result = null;
+
 		try {
-			return input.readObject();
-		} catch (ClassNotFoundException e) {
-			System.out.println("CFE");
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			System.out.println("IO");
-			e.printStackTrace();
-
+			result = input.readObject();
+		} catch (ClassNotFoundException | IOException e) {
+			return Message.CONNECTION_LOST;
 		}
-		return null;
+
+		return result;
 	}
 }

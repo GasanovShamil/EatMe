@@ -13,7 +13,7 @@ public class ServerAcceptThread extends Thread {
 	private ServerSocket serverSocket;
 	private ServerConnectionThread serverConnectionThread;
 	private Connection dbConnection;
-	//private static Logger log = Logger.getLogger(ServerAcceptThread.class.getName());
+	private static Logger log = Logger.getLogger(ServerAcceptThread.class.getName());
 	
 	public ServerAcceptThread(int port, ArrayList<ServerUserThread> users, Queue queue, Connection dbConnection) throws IOException {
 		this.users = users;
@@ -30,7 +30,7 @@ public class ServerAcceptThread extends Thread {
 				synchronized (queue) {
 					serverConnectionThread = new ServerConnectionThread(socket, users, queue,dbConnection);
 				}
-				//log.warning("new connection recieved");
+				log.info("new connection recieved");
 				serverConnectionThread.start();
 
 			} catch (IOException e) {

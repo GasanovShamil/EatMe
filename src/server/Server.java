@@ -18,8 +18,8 @@ import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 
 public class Server {
-	//private static Logger log = Logger.getLogger(Server.class.getName());
-	private static ArrayList<ServerUserThread> users;
+	private static Logger log = Logger.getLogger(Server.class.getName());
+	private static ArrayList<ServerUserThread> usersThreads;
 	private static Queue queue;
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
@@ -28,9 +28,9 @@ public class Server {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Connection dbConnection=null;
 		setConf();
-		//LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
-		users = new ArrayList<ServerUserThread>();
-		queue = new Queue();
+		LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
+		usersThreads = new ArrayList<ServerUserThread>();
+		queue = new Queue(usersThreads);
 		InetAddress addr = InetAddress.getLocalHost();
 		Properties prop = new Properties();
 		prop.put("characterEncoding", "UTF8");
@@ -42,9 +42,8 @@ public class Server {
 			System.out.println("Pas de connection sur la BD");
 			System.exit(1);
 		}
-		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), users, queue, dbConnection);
-		//log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
-		System.out.println("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
+		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), usersThreads, queue, dbConnection);
+		log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		sat.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		while (!flag) {

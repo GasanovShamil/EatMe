@@ -1,19 +1,24 @@
 package server;
 
+import java.util.ArrayList;
+
 import enums.Message;
 import game.User;
 
 public class ServerUserThread extends Thread {
 	private User user;
 	private Queue queue;
+	private ArrayList<ServerUserThread> usersThreads;
 
-	public ServerUserThread(User user, Queue queue) {
+	public ServerUserThread(User user, Queue queue, ArrayList<ServerUserThread> usersThreads) {
 		this.user = user;
 		this.queue = queue;
+		this.usersThreads = usersThreads;
 	}
 
 	public void run() {
 		while (!isInterrupted()) {
+
 			Message msg = (Message) user.recieve();
 
 			switch (msg) {
@@ -42,19 +47,38 @@ public class ServerUserThread extends Thread {
 				}
 				break;
 			case DECONNECT:
-				//interrupt();
+				synchronized (usersThreads) {
+					usersThreads.remove(this);
+				}
+				interrupt();
 				break;
+
+			case CONNECTION_LOST:
+				synchronized (usersThreads) {
+					usersThreads.remove(this);
+				}
+				interrupt();
+				break;
+
 			default:
 				break;
 			}
-			
-			synchronized(user){
+
+			synchronized (user) {
 				try {
 					user.wait();
 				} catch (InterruptedException e) {
-					System.out.println("ServerUserThread : Connection lost - "+ user.getUsername());
+					System.out.println("ServerUserThread : Connection lost - " + user.getUsername());
+					synchronized (usersThreads) {
+						usersThreads.remove(this);
+					}
+					interrupt();
 				}
 			}
 		}
+	}
+
+	public String getUsername() {
+		return user.getUsername();
 	}
 }

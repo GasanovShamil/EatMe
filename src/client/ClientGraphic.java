@@ -421,17 +421,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						switchMode(Mode.MENU, 0);
 					} else {
 						error = "Cet identifiant est déjà utilisé.";
-						check = false;
 						switchMode(mode, 0);
 					}
 					switchMode(Mode.MENU, 0);
 				} else if (!check) {
-					password = "";
 					error = "Les mots de passe ne correspondent pas !";
-					switchMode(Mode.DEFAULT, 0);
+					switchMode(mode, 0);
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(Mode.SUBSCRIBE, 0);
+					switchMode(mode, 0);
 				}
 			}
 		});
@@ -508,23 +506,21 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				username = jtfUsername.getText();
 				password = new String(jpfPassword.getPassword());
 
-				if (!username.isEmpty() && !password.isEmpty() && check) {
+				if (!username.isEmpty() && !password.isEmpty()) {
 					Message msg = client.connect(Message.AUTHENTICATE, username, password);
 					if (msg == Message.SUCCESS) {
 						ok();
 						switchMode(Mode.MENU, 0);
 					} else if (msg == Message.ALREADY_IN_USE){
 						error = "Un utilisateur est déjà connecté avec cet identifiant.";
-						check = false;
 						switchMode(mode, 0);
 					} else if (msg == Message.FAIL){
 						error = "Identifiants incorrects.";
-						check = false;
-						switchMode(Mode.DEFAULT, 0);
+						switchMode(mode, 0);
 					}
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(Mode.CONNECT, 0);
+					switchMode(mode, 0);
 				}
 			}
 		});

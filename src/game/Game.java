@@ -44,9 +44,7 @@ public class Game extends Thread {
 					send(Message.ROUND_END_NEUTRAL, roundNeutrals);
 					send(Message.ROUND_END_LOSER, roundLoser);
 					setRoles((Role[]) players[roundLoser].recieve());
-					for (int i = 0; i < players.length; i++) {
-						System.out.println(players[i].getUsername() + " : " + players[i].getRole());
-					}
+					
 				}
 			}else{
 				sendAll(Message.ENNEMY_DISCONNECTED);
@@ -112,7 +110,7 @@ public class Game extends Thread {
 		int check = -1;
 
 		for (Player player : players) {
-			if (player.getPoints() >= 10) {
+			if (player.getPoints() >= 5) {
 				winners.add(player.getPosition());
 			}
 		}
@@ -180,8 +178,6 @@ public class Game extends Thread {
 			Role role = roles.get(rand);
 
 			players[cpt++].setRole(role);
-			System.out.println(role);
-			System.out.println(players[cpt - 1].getUsername());
 			roles.remove(role);
 		}
 	}

@@ -21,7 +21,6 @@ public class ClientConsole {
 		Client client = null;
 		boolean flag = false;
 		boolean inGame = false;
-		boolean test = false;
 		boolean connectionCheck = false;
 		client = new Client();
 		// port = 9443

@@ -69,11 +69,6 @@ public class Queue {
 
 	private void checkStart(int numberOfPlayers, ArrayList<User> users) {
 		connectionTest(users);
-		
-		for (User u : users){
-			System.out.println(u.getUsername());
-		}
-		System.out.println();
 
 		if (users.size() == numberOfPlayers) {
 			Player[] players = new Player[numberOfPlayers];

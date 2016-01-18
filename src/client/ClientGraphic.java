@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -15,12 +13,14 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 
 import client.Client;
 import enums.*;
-import game.Player;
+import game.*;
 
 @SuppressWarnings("serial")
 public class ClientGraphic extends JFrame implements WindowListener {
@@ -43,6 +43,8 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	private boolean check;
 
 	private Client client;
+	private ArrayList<Role> listRoles;
+	private Role[] roles;
 
 	public ClientGraphic() {
 		super("Eat Me If You Can !");
@@ -68,8 +70,10 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		password = "";
 		check = true;
 		client = new Client();
+		listRoles = null;
+		roles = null;
 
-		switchMode(Mode.DEFAULT);
+		switchMode(Mode.DEFAULT, 0);
 	}
 
 	private void ok() {
@@ -83,7 +87,18 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		return jlError;
 	}
 
-	private void switchMode(Mode mode) {
+	private void setPlayerPositionPanel(JPanel pane, Player[] players, int[] index) {
+		int me = client.getPosition();
+		int size = players.length;
+		int cpt = 0;
+
+		for (int i = me + 1; i < me + size; i++) {
+			JPanel enemy = getPlayerPanel(players[i % size]);
+			((JPanel) pane.getComponent(index[cpt++])).add(enemy);
+		}
+	}
+
+	private void switchMode(Mode mode, int i) {
 		JPanel pane = new JPanel();
 		pane.setLayout(new BorderLayout());
 
@@ -111,12 +126,39 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			break;
 
 		case WAITING:
+		case CHECK_ROUND:
 			pane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			break;
 
 		case INGAME:
 			pane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			pane.add(getIngamePanel(), BorderLayout.CENTER);
+			break;
+
+		case ROLE_ATTRIB:
+			if (i == 0) {
+				int size = client.getPlayers().length;
+				listRoles = Role.generateRoles(size);
+				roles = new Role[size];
+
+				pane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			}
+
+			pane.add(getRoleAttribPanel(i), BorderLayout.CENTER);
+			break;
+
+		case WINNER:
+			pane.add(getLogoPanel(), BorderLayout.WEST);
+			pane.add(getEndGamePanel(true), BorderLayout.CENTER);
+			break;
+
+		case LOSER:
+			pane.add(getLogoPanel(), BorderLayout.WEST);
+			pane.add(getEndGamePanel(false), BorderLayout.CENTER);
+			break;
+
+		case CONNECTION_LOST:
+			pane.add(getConnectionLostPanel(), BorderLayout.CENTER);
 			break;
 
 		default:
@@ -128,9 +170,41 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		refresh();
 
 		if (mode == Mode.WAITING) {
-			client.startRound((Player[]) client.recieve());
+			Object obj = client.recieve();
+			if (obj instanceof Message && (Message) obj == Message.CONNECTION_LOST) {
+				switchMode(Mode.CONNECTION_LOST, 0);
+			} else {
+				client.startRound((Player[]) obj);
+				switchMode(Mode.INGAME, 0);
+			}
+		} else if (mode == Mode.CHECK_ROUND) {
+			Message message = (Message) client.recieve();
 
-			switchMode(Mode.INGAME);
+			switch (message) {
+			case GAME_END_LOSER:
+				switchMode(Mode.LOSER, 0);
+				break;
+
+			case GAME_END_WINNER:
+				switchMode(Mode.WINNER, 0);
+				break;
+
+			case ROUND_END_LOSER:
+				switchMode(Mode.ROLE_ATTRIB, 0);
+				break;
+
+			case ROUND_END_NEUTRAL:
+			case ROUND_END_WINNER:
+				switchMode(Mode.WAITING, 0);
+				break;
+
+			case CONNECTION_LOST:
+				switchMode(Mode.CONNECTION_LOST, 0);
+				break;
+
+			default:
+				break;
+			}
 		}
 	}
 
@@ -209,22 +283,22 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						port = Integer.parseInt(serverPort);
 					} catch (NumberFormatException nfe) {
 						error = "Le port est non valide.";
-						switchMode(mode);
+						switchMode(mode, 0);
 					}
 
 					if (port < 0 || port > 65536) {
 						error = "Le port est non valide.";
-						switchMode(mode);
+						switchMode(mode, 0);
 					} else if (client.setConnection(serverAdress, port)) {
 						ok();
-						switchMode(Mode.SUBSCRIBE);
+						switchMode(Mode.SUBSCRIBE, 0);
 					} else {
 						error = "Connexion impossible !";
-						switchMode(mode);
+						switchMode(mode, 0);
 					}
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(mode);
+					switchMode(mode, 0);
 				}
 			}
 		});
@@ -244,22 +318,22 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						port = Integer.parseInt(serverPort);
 					} catch (NumberFormatException nfe) {
 						error = "Le port est non valide.";
-						switchMode(mode);
+						switchMode(mode, 0);
 					}
 
 					if (port < 0 || port > 65536) {
 						error = "Le port est non valide.";
-						switchMode(mode);
+						switchMode(mode, 0);
 					} else if (client.setConnection(serverAdress, port)) {
 						ok();
-						switchMode(Mode.CONNECT);
+						switchMode(Mode.CONNECT, 0);
 					} else {
 						error = "Connexion impossible !";
-						switchMode(mode);
+						switchMode(mode, 0);
 					}
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(mode);
+					switchMode(mode, 0);
 				}
 			}
 		});
@@ -344,20 +418,20 @@ public class ClientGraphic extends JFrame implements WindowListener {
 					Message msg = client.connect(Message.CREATE_ACCOUNT, username, password);
 					if (msg == Message.SUCCESS) {
 						ok();
-						switchMode(Mode.MENU);
+						switchMode(Mode.MENU, 0);
 					} else {
 						error = "Cet identifiant est déjà utilisé.";
 						check = false;
-						switchMode(mode);
+						switchMode(mode, 0);
 					}
-					switchMode(Mode.MENU);
+					switchMode(Mode.MENU, 0);
 				} else if (!check) {
 					password = "";
 					error = "Les mots de passe ne correspondent pas !";
-					switchMode(mode);
+					switchMode(mode, 0);
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(mode);
+					switchMode(mode, 0);
 				}
 			}
 		});
@@ -367,7 +441,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				switchMode(Mode.DEFAULT);
+				switchMode(Mode.DEFAULT, 0);
 			}
 		});
 
@@ -438,15 +512,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 					Message msg = client.connect(Message.AUTHENTICATE, username, password);
 					if (msg == Message.SUCCESS) {
 						ok();
-						switchMode(Mode.MENU);
+						switchMode(Mode.MENU, 0);
 					} else {
 						error = "Identifiants incorrects.";
 						check = false;
-						switchMode(Mode.DEFAULT);
+						switchMode(Mode.DEFAULT, 0);
 					}
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(Mode.CONNECT);
+					switchMode(Mode.CONNECT, 0);
 				}
 			}
 		});
@@ -456,7 +530,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				switchMode(Mode.DEFAULT);
+				switchMode(Mode.DEFAULT, 0);
 			}
 		});
 
@@ -488,7 +562,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					check = false;
-					switchMode(mode);
+					switchMode(mode, 0);
 				}
 			});
 			pane.add(jbStartGame);
@@ -498,8 +572,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			jbDeconnect.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					client.send(Message.DECONNECT);
-					switchMode(Mode.DEFAULT);
+					if (client.send(Message.DECONNECT)) {
+						switchMode(Mode.DEFAULT, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
 				}
 			});
 			pane.add(jbDeconnect);
@@ -507,10 +584,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			JButton jbStart3 = new JButton("3 joueurs");
 			jbStart3.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			jbStart3.addActionListener(new ActionListener() {
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					client.send(Message.START_3P);
-					switchMode(Mode.WAITING);
+					if (client.send(Message.START_3P)) {
+						switchMode(Mode.WAITING, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
 				}
 			});
 			pane.add(jbStart3);
@@ -520,8 +601,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			jbStart4.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					client.send(Message.START_4P);
-					switchMode(Mode.WAITING);
+					if (client.send(Message.START_4P)) {
+						switchMode(Mode.WAITING, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
 				}
 			});
 			pane.add(jbStart4);
@@ -531,8 +615,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			jbStart5.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					client.send(Message.START_5P);
-					switchMode(Mode.WAITING);
+					if (client.send(Message.START_5P)) {
+						switchMode(Mode.WAITING, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
 				}
 			});
 			pane.add(jbStart5);
@@ -542,8 +629,11 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			jbStart6.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					client.send(Message.START_6P);
-					switchMode(Mode.WAITING);
+					if (client.send(Message.START_6P)) {
+						switchMode(Mode.WAITING, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
 				}
 			});
 			pane.add(jbStart6);
@@ -554,13 +644,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					check = true;
-					switchMode(mode);
+					switchMode(mode, 0);
 				}
 			});
 			pane.add(jbCancel);
 		}
 
 		return pane;
+
 	}
 
 	private JPanel getWaitingPanel() {
@@ -576,107 +667,219 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel getPlayerPanel(Player player) {
 		JPanel pane = new JPanel();
-		pane.setSize(new Dimension(100, 100));
+		pane.setSize(new Dimension(150, 150));
 		pane.setLayout(new GridLayout(3, 1));
-		pane.setBackground(Color.CYAN);
 
-		ImageIcon image = new ImageIcon("img/loading.gif");
-		JLabel jlRole = new JLabel(player.getRole().getName());
-		pane.add(jlRole);
+		JButton jbRole = new JButton(player.getRole().getName());
+		if (client.getPlayer().getRole().isWolf() && !client.getPlayer().getUsername().equals(player.getUsername())) {
+			jbRole.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((Wolf) client.getPlayer().getRole()).bite(player);
+					if (client.send(client.getPlayer().getRole())) {
+						switchMode(Mode.CHECK_ROUND, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
+				}
+			});
+		}
+		pane.add(jbRole);
 
 		JLabel jlUsername = new JLabel(player.getUsername());
 		pane.add(jlUsername);
 
-		JLabel jlPoints = new JLabel("" + player.getPoints());
+		JLabel jlPoints = new JLabel(player.getPoints() + " point(s)");
 		pane.add(jlPoints);
 
 		return pane;
 	}
 
 	private JPanel getIngamePanel() {
-		boolean isWolf=client.getPlayer().getRole().isWolf();
 		JPanel pane = new JPanel();
 		pane.setSize(dimension);
-		pane.setBackground(Color.YELLOW);
 		pane.setLayout(new GridLayout(5, 5));
-		for (int i = 0; i < 25; i++) {
-			JPanel p = new JPanel();
-			JLabel l = new JLabel("" + i);
-			p.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
-			p.add(l);
-			pane.add(p);
-			System.out.println(p.getPreferredSize());
-		}
-		Player[] players = client.getPlayers();
 
+		for (int i = 0; i < 25; i++) {
+			pane.add(new JPanel());
+		}
+
+		Player[] players = client.getPlayers();
 		int nbPlayers = players.length;
-		
-		int cpt;
+		boolean isWolf = client.getPlayer().getRole().isWolf();
+
+		((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
 		switch (nbPlayers) {
 		case 3:
-			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
-			int[] index3 = { 10, 14 };
-			cpt = 0;
-			for (int i = 0; i < players.length; i++) {
-				if (i != client.getPosition()) {
-					JPanel enemy = getPlayerPanel(players[i]);
-					
-					((JPanel) pane.getComponent(index3[cpt++])).add(enemy);
-				}
-			}
-
-			pane.repaint();
-			pane.revalidate();
+			setPlayerPositionPanel(pane, players, new int[] { 10, 14 });
 			break;
-			
+
 		case 4:
-			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
-			int[] index4 = { 2, 10, 14 };
-			cpt = 0;
-			for (int i = 0; i < players.length; i++) {
-				if (i != client.getPosition()) {
-					JPanel enemy = getPlayerPanel(players[i]);
-					((JPanel) pane.getComponent(index4[cpt++])).add(enemy);
-				}
-			}
-
-			pane.repaint();
-			pane.revalidate();
+			setPlayerPositionPanel(pane, players, new int[] { 10, 2, 14 });
 			break;
-			
+
 		case 5:
-			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
-			int[] index5 = { 1, 3, 10, 14 };
-			cpt = 0;
-			for (int i = 0; i < players.length; i++) {
-				if (i != client.getPosition()) {
-					JPanel enemy = getPlayerPanel(players[i]);
-					((JPanel) pane.getComponent(index5[cpt++])).add(enemy);
-				}
-			}
-			break;
-			
-		case 6:
-			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
-			int[] index6 = { 2, 5, 9, 15, 19 };
-			cpt = 0;
-			for (int i = 0; i < players.length; i++) {
-				if (i != client.getPosition()) {
-					JPanel enemy = getPlayerPanel(players[i]);
-					((JPanel) pane.getComponent(index6[cpt++])).add(enemy);
-				}
-			}
+			setPlayerPositionPanel(pane, players, new int[] { 10, 1, 3, 14 });
 			break;
 
+		case 6:
+			setPlayerPositionPanel(pane, players, new int[] { 15, 5, 2, 9, 19 });
+			break;
 		}
-		if(isWolf){
-			JLabel l=new JLabel("Qui mordre?");
-			((JPanel) pane.getComponent(12)).add(l);
-		}else{
-			JLabel l=new JLabel("Piege ou bonnet?");
-			((JPanel) pane.getComponent(12)).add(l);
+
+		if (isWolf) {
+			JLabel jlAction = new JLabel("Qui mordre ?");
+			JPanel jpAction = ((JPanel) pane.getComponent(12));
+			jpAction.add(jlAction);
+		} else {
+			JLabel jlAction = new JLabel("Que vais-je faire ?");
+			JButton jbSleep = new JButton("Dormir");
+			jbSleep.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((Innocent) client.getPlayer().getRole()).sleep();
+					if (client.send(client.getPlayer().getRole())) {
+						switchMode(Mode.CHECK_ROUND, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
+				}
+			});
+
+			JButton jbTrap = new JButton("Poser un piège");
+			jbTrap.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					((Innocent) client.getPlayer().getRole()).putTrap();
+					if (client.send(client.getPlayer().getRole())) {
+						switchMode(Mode.CHECK_ROUND, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
+				}
+			});
+
+			JPanel jpAction = ((JPanel) pane.getComponent(12));
+			jpAction.add(jlAction);
+			jpAction.add(jbSleep);
+			jpAction.add(jbTrap);
 		}
-		
+
+		return pane;
+
+	}
+
+	private JPanel getRoleAttribPanel(int position) {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
+
+		Player[] players = client.getPlayers();
+		String text = "";
+
+		JLabel jlText = new JLabel("Rôle de");
+		pane.add(jlText);
+
+		for (int i = 0; i < position; i++) {
+			if (roles[i] != null) {
+				text = players[i].getUsername() + " : " + roles[i].getName();
+				JLabel jlUser = new JLabel(text);
+				pane.add(jlUser);
+			}
+		}
+
+		JLabel jlUsername = new JLabel(players[position].getUsername() + " : ");
+		pane.add(jlUsername);
+
+		JComboBox<Role> jcbRoles = new JComboBox<Role>();
+		for (Role role : listRoles) {
+			jcbRoles.addItem(role);
+		}
+		pane.add(jcbRoles);
+
+		text = (position == players.length - 1) ? "Terminer" : "Suivant";
+		JButton jbRoles = new JButton(text);
+		jbRoles.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (listRoles.size() == 1) {
+					roles[players.length - 1] = listRoles.get(0);
+					if (client.send(roles)) {
+						switchMode(Mode.WAITING, 0);
+					} else {
+						switchMode(Mode.CONNECTION_LOST, 0);
+					}
+				} else {
+					Role role = (Role) jcbRoles.getSelectedItem();
+					roles[position] = role;
+					listRoles.remove(role);
+					switchMode(Mode.ROLE_ATTRIB, position + 1);
+				}
+			}
+		});
+		pane.add(jbRoles);
+
+		return pane;
+	}
+
+	private JPanel getEndGamePanel(boolean isWinner) {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
+
+		String path = isWinner ? "img/winner.gif" : "img/loser.gif";
+		ImageIcon image = new ImageIcon(path);
+		JLabel jlImage = new JLabel(image);
+		pane.add(jlImage);
+
+		String text = isWinner ? "Félicitations !" : "Bouuuuuuuh !";
+		JLabel jlText = new JLabel(text);
+		pane.add(jlText);
+
+		JButton jbMenu = new JButton("Rejouer");
+		jbMenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchMode(Mode.MENU, 0);
+			}
+		});
+		pane.add(jbMenu);
+
+		JButton jbLeave = new JButton("Quitter");
+		jbLeave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		pane.add(jbLeave);
+
+		return pane;
+	}
+
+	private JPanel getConnectionLostPanel() {
+		JPanel pane = new JPanel();
+		pane.setPreferredSize(dimension);
+
+		JLabel jlText = new JLabel("CONNECTION LOST");
+		pane.add(jlText);
+
+		JButton jbMenu = new JButton("Se reconnecter");
+		jbMenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switchMode(Mode.DEFAULT, 0);
+			}
+		});
+		pane.add(jbMenu);
+
+		JButton jbLeave = new JButton("Quitter");
+		jbLeave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		pane.add(jbLeave);
+
 		return pane;
 	}
 

@@ -59,7 +59,7 @@ public class ClientConsole {
 					break;
 				}
 			}
-			
+
 			System.out.print("\nEntrez votre username : ");
 			String username = keyboard.readLine();
 			System.out.print("Entrez votre mot de passe : ");
@@ -86,7 +86,7 @@ public class ClientConsole {
 					+ "\n3/ Lancer une partie à 5 joueurs" + "\n4/ Lancer une partie à 6 joueurs" + "\n999/ Déconnexion"
 					+ "\nVotre choix : ");
 			String choix = keyboard.readLine();
-			
+
 			switch (choix) {
 			case "1":
 				connectionCheck = client.send(Message.START_3P);
@@ -195,7 +195,7 @@ public class ClientConsole {
 							System.out.println("NE ZA CHTO");
 							break;
 						}
-					}else{
+					} else {
 						System.out.println("CONNECTION LOST");
 						inGame = false;
 						flag = true;

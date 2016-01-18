@@ -24,8 +24,7 @@ public class Server {
 	private static boolean flag = false;
 	private static ConfigurationBean conf;
 	
-	
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public Server() throws SecurityException, IOException {
 		Connection dbConnection=null;
 		setConf();
 		LogManager.getLogManager().readConfiguration(Server.class.getResourceAsStream("logging.properties"));
@@ -68,7 +67,7 @@ public class Server {
 	 * 
 	 * @return ConfigurationBean - object pour configurer le serveur
 	 */
-	private static void setConf() {
+	private void setConf() {
 		int port = 0;
 
 		try {
@@ -80,6 +79,15 @@ public class Server {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 		}
-
+	}
+	
+	public static void main(String[] args){
+		try {
+			new Server();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

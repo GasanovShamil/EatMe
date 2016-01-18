@@ -111,7 +111,7 @@ public class ClientConsole {
 				break;
 
 			case "999":
-				connectionCheck = client.send(Message.DECONNECT);
+				connectionCheck = client.send(Message.DISCONNECT);
 				flag = true;
 				inGame = false;
 				break;

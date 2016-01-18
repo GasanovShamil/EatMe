@@ -41,18 +41,20 @@ public class User implements Serializable {
 		return flag;
 	}
 
-	public void send(Object message) {
+	public boolean send(Object message) {
+		boolean flag=true;
 		try {
 			output.writeObject(message);
 			Thread.sleep(1000);
 			output.flush();
 			output.reset();
 		} catch (IOException e) {
-			e.printStackTrace();
+			flag = false;
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			flag = false;
 		}
+		
+		return flag;
 	}
 
 	public Object recieve() {

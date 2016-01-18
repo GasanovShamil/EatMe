@@ -25,39 +25,49 @@ public class Game extends Thread {
 			roundWinners = new ArrayList<Integer>();
 			roundNeutrals = new ArrayList<Integer>();
 			roundLoser = -1;
-			sendInfos();
-			recieveAll();
-			doGame();
-			int winner = checkWin();
-			if (winner != -1) {
-				send(Message.GAME_END_WINNER, winner);
-				send(Message.GAME_END_LOSER, gameLosers);
-				for (int i = 0; i < players.length; i++) {
-					System.out.println("Partie fini");
-					players[i].notifyUser();
-					System.out.println("J'ai notify");
+			sendAll(players);
+			if (recieveAll()) {
+				doGame();
+				int winner = checkWin();
+				if (winner != -1) {
+					send(Message.GAME_END_WINNER, winner);
+					send(Message.GAME_END_LOSER, gameLosers);
+					for (int i = 0; i < players.length; i++) {
+						System.out.println("Partie fini");
+						players[i].notifyUser();
+						System.out.println("J'ai notify");
+					}
+					interrupt();
+				} else {
+					send(Message.ROUND_END_WINNER, roundWinners);
+					send(Message.ROUND_END_NEUTRAL, roundNeutrals);
+					send(Message.ROUND_END_LOSER, roundLoser);
+					setRoles((Role[]) players[roundLoser].recieve());
+					for (int i = 0; i < players.length; i++) {
+						System.out.println(players[i].getUsername() + " : " + players[i].getRole());
+					}
 				}
+			}else{
+				sendAll(Message.ENNEMY_DISCONNECTED);
 				interrupt();
-			} else {
-				send(Message.ROUND_END_WINNER, roundWinners);
-				send(Message.ROUND_END_NEUTRAL, roundNeutrals);
-				send(Message.ROUND_END_LOSER, roundLoser);
-				setRoles((Role[]) players[roundLoser].recieve());
-				for (int i = 0; i < players.length; i++) {
-					System.out.println(players[i].getUsername() + " : " + players[i].getRole());
-				}
 			}
 		}
 	}
 
-	private void recieveAll() {
+	private boolean recieveAll() {
 		for (int i = 0; i < players.length; i++) {
-			players[i].setRole((Role) players[i].recieve());
+			Object obj = players[i].recieve();
+			if (obj instanceof Message && (obj == Message.CONNECTION_LOST || obj == Message.DISCONNECT)) {
+				return false;
+			} else {
+				players[i].setRole((Role) obj);
+			}
 		}
+		return true;
 	}
 
-	private void send(Object message, int position) {
-		players[position].send(message);
+	private boolean send(Object message, int position) {
+		return players[position].send(message);
 	}
 
 	private void send(Object message, ArrayList<Integer> positions) {
@@ -66,12 +76,12 @@ public class Game extends Thread {
 		}
 	}
 
-	private void sendInfos() {
+	private void sendAll(Object message) {
 		ArrayList<Integer> positions = new ArrayList<Integer>();
 		for (int i = 0; i < players.length; i++) {
 			positions.add(i);
 		}
-		send(players, positions);
+		send(message, positions);
 	}
 
 	private int getWolf() {
@@ -152,7 +162,6 @@ public class Game extends Thread {
 		return check;
 	}
 
-	
 	/**
 	 * <p>
 	 * Méthode d'attribution aléatoire des rôles

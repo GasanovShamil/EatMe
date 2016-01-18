@@ -46,7 +46,7 @@ public class ServerUserThread extends Thread {
 					System.out.println(user.getUsername() + " need game 6 p");
 				}
 				break;
-			case DECONNECT:
+			case DISCONNECT:
 				synchronized (usersThreads) {
 					usersThreads.remove(this);
 				}

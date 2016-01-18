@@ -55,8 +55,8 @@ public class Player implements Serializable {
 				: ((Innocent) ((Wolf) role).getTarget().role).getValue();
 	}
 
-	public void send(Object message) {
-		user.send(message);
+	public boolean send(Object message) {
+		return user.send(message);
 	}
 
 	public Object recieve() {

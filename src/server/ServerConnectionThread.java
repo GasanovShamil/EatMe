@@ -42,7 +42,6 @@ public class ServerConnectionThread extends Thread {
 	}
 
 	public void run() {
-
 		while (!isInterrupted()) {
 			boolean connected = true;
 			try {

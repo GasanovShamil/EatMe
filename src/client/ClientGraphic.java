@@ -201,7 +201,12 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			case CONNECTION_LOST:
 				switchMode(Mode.CONNECTION_LOST, 0);
 				break;
-
+				
+			case ENNEMY_DISCONNECTED:
+				error = "Un des utilisateurs s'est déconnecté avant la fin de la partie.";
+				switchMode(Mode.MENU, 0);
+				break;
+				
 			default:
 				break;
 			}
@@ -228,7 +233,8 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jlImage.setPreferredSize(new Dimension(200, 200));
 		pane.add(jlImage);
 
-		JLabel jlWelcome = new JLabel("<html>Bienvenue sur <br> Eat Me If You Can !</html>");
+		JLabel jlWelcome = new JLabel(
+				"<html>Bienvenue " + client.getUsername() + "sur <br> Eat Me If You Can !</html>");
 		pane.add(jlWelcome);
 
 		return pane;
@@ -423,7 +429,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 						error = "Cet identifiant est déjà utilisé.";
 						switchMode(mode, 0);
 					}
-					switchMode(Mode.MENU, 0);
 				} else if (!check) {
 					error = "Les mots de passe ne correspondent pas !";
 					switchMode(mode, 0);
@@ -439,6 +444,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ok();
 				switchMode(Mode.DEFAULT, 0);
 			}
 		});
@@ -511,10 +517,10 @@ public class ClientGraphic extends JFrame implements WindowListener {
 					if (msg == Message.SUCCESS) {
 						ok();
 						switchMode(Mode.MENU, 0);
-					} else if (msg == Message.ALREADY_IN_USE){
+					} else if (msg == Message.ALREADY_IN_USE) {
 						error = "Un utilisateur est déjà connecté avec cet identifiant.";
 						switchMode(mode, 0);
-					} else if (msg == Message.FAIL){
+					} else if (msg == Message.FAIL) {
 						error = "Identifiants incorrects.";
 						switchMode(mode, 0);
 					}
@@ -530,6 +536,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jbCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ok();
 				switchMode(Mode.DEFAULT, 0);
 			}
 		});
@@ -572,7 +579,8 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			jbDeconnect.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					if (client.send(Message.DECONNECT)) {
+					if (client.send(Message.DISCONNECT)) {
+						ok();
 						switchMode(Mode.DEFAULT, 0);
 					} else {
 						switchMode(Mode.CONNECTION_LOST, 0);
@@ -648,6 +656,8 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				}
 			});
 			pane.add(jbCancel);
+			
+			pane.add(getError());
 		}
 
 		return pane;
@@ -766,7 +776,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		}
 
 		return pane;
-
 	}
 
 	private JPanel getRoleAttribPanel(int position) {
@@ -859,13 +868,15 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
 
-		JLabel jlText = new JLabel("CONNECTION LOST");
-		pane.add(jlText);
+		ImageIcon image = new ImageIcon("img/conlost.png");
+		JLabel jlImage = new JLabel(image);
+		pane.add(jlImage);
 
 		JButton jbMenu = new JButton("Se reconnecter");
 		jbMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ok();
 				switchMode(Mode.DEFAULT, 0);
 			}
 		});
@@ -886,7 +897,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 		if (client.isAuthenticated()) {
-			client.send(Message.DECONNECT);
+			client.send(Message.DISCONNECT);
 		}
 
 		e.getWindow().setVisible(false);

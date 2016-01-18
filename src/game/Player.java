@@ -2,6 +2,11 @@ package game;
 
 import java.io.Serializable;
 
+/**
+ * <p>
+ * Classe correspondant à un joueur
+ * </p>
+ */
 @SuppressWarnings("serial")
 public class Player implements Serializable {
 	private User user;

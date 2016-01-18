@@ -5,6 +5,11 @@ import java.io.Serializable;
 import client.ConnectionBean;
 import enums.Message;
 
+/**
+ * <p>
+ * Classe correspondant à une tentative de connexion via un type, un identifiant et un mot de passe
+ * </p>
+ */
 @SuppressWarnings("serial")
 public class ConnectionBean implements Serializable {
 	private Message type;

@@ -8,6 +8,11 @@ import java.net.Socket;
 
 import enums.Message;
 
+/**
+ * <p>
+ * Classe correspondant à un utilisateur authentifié
+ * </p>
+ */
 @SuppressWarnings("serial")
 public class User implements Serializable {
 	private String username;

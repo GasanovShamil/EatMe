@@ -1,5 +1,10 @@
 package game;
 
+/**
+ * <p>
+ * Classe correspondant aux rôles autres que loup
+ * </p>
+ */
 @SuppressWarnings("serial")
 public abstract class Innocent extends Role {
 	private int value;
@@ -32,6 +37,11 @@ public abstract class Innocent extends Role {
 	}
 }
 
+/**
+ * <p>
+ * Classe correspondant au rôle de cochon
+ * </p>
+ */
 @SuppressWarnings("serial")
 class Pig extends Innocent {
 	public Pig() {
@@ -39,6 +49,11 @@ class Pig extends Innocent {
 	}
 }
 
+/**
+ * <p>
+ * Classe correspondant au rôle du petit chaperon rouge
+ * </p>
+ */
 @SuppressWarnings("serial")
 class LittleRedCap extends Innocent {
 	public LittleRedCap() {
@@ -46,6 +61,11 @@ class LittleRedCap extends Innocent {
 	}
 }
 
+/**
+ * <p>
+ * Classe correspondant au rôle des chevreaux
+ * </p>
+ */
 @SuppressWarnings("serial")
 class YoungKids extends Innocent {
 	public YoungKids() {

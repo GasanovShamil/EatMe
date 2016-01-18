@@ -1,5 +1,10 @@
 package game;
 
+/**
+ * <p>
+ * Classe correspondant au rôle de loup
+ * </p>
+ */
 @SuppressWarnings("serial")
 public class Wolf extends Role {
 	Player target;

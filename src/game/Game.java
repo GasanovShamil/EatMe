@@ -3,6 +3,11 @@ package game;
 import java.util.ArrayList;
 import enums.Message;
 
+/**
+ * <p>
+ * Classe correspondant à une partie
+ * </p>
+ */
 public class Game extends Thread {
 	private Player[] players;
 	private ArrayList<Integer> roundWinners;
@@ -81,6 +86,13 @@ public class Game extends Thread {
 		return position;
 	}
 
+	/**
+	 * <p>
+	 * Méthode de vérification des points afin de désigner un vainqueur
+	 * </p>
+	 * 
+	 * @return La position du vainqueur de la partie ou -1 si personne n'a gagné
+	 */
 	public int checkWin() {
 		ArrayList<Integer> winners = new ArrayList<Integer>();
 		int check = -1;
@@ -140,6 +152,12 @@ public class Game extends Thread {
 		return check;
 	}
 
+	
+	/**
+	 * <p>
+	 * Méthode d'attribution aléatoire des rôles
+	 * </p>
+	 */
 	private void randomRoles() {
 		ArrayList<Role> roles = Role.generateRoles(players.length);
 		int cpt = 0;

@@ -1,7 +1,2 @@
-janv. 18, 2016 2:50:05 AM server.Server <init>
+janv. 18, 2016 3:23:34 AM server.Server <init>
 INFOS: Server started at 192.168.1.18:9443
-janv. 18, 2016 2:50:36 AM server.ServerAcceptThread run
-INFOS: new connection recieved
-janv. 18, 2016 2:50:45 AM server.ServerConnectionThread authenticate
-INFOS: shamil vient de se connecter.
-Console : 

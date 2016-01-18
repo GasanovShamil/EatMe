@@ -112,7 +112,7 @@ public class Game extends Thread {
 		int check = -1;
 
 		for (Player player : players) {
-			if (player.getPoints() >= 5) {
+			if (player.getPoints() >= 10) {
 				winners.add(player.getPosition());
 			}
 		}

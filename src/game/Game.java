@@ -36,9 +36,7 @@ public class Game extends Thread {
 					send(Message.GAME_END_WINNER, winner);
 					send(Message.GAME_END_LOSER, gameLosers);
 					for (int i = 0; i < players.length; i++) {
-						System.out.println("Partie fini");
 						players[i].notifyUser();
-						System.out.println("J'ai notify");
 					}
 					interrupt();
 				} else {
@@ -52,6 +50,9 @@ public class Game extends Thread {
 				}
 			}else{
 				sendAll(Message.ENNEMY_DISCONNECTED);
+				for (int i = 0; i < players.length; i++) {
+					players[i].notifyUser();
+				}
 				interrupt();
 			}
 		}

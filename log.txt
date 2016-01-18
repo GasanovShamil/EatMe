@@ -1,12 +1,24 @@
-janv. 18, 2016 2:10:37 AM server.Server <init>
+janv. 18, 2016 2:42:55 AM server.Server <init>
 INFOS: Server started at 192.168.1.18:9443
-janv. 18, 2016 2:10:46 AM server.ServerAcceptThread run
+janv. 18, 2016 2:43:14 AM server.ServerAcceptThread run
 INFOS: new connection recieved
-janv. 18, 2016 2:10:52 AM server.ServerConnectionThread authenticate
+janv. 18, 2016 2:43:19 AM server.ServerConnectionThread authenticate
 INFOS: shamil vient de se connecter.
 Console : 
-janv. 18, 2016 2:11:12 AM server.ServerAcceptThread run
+janv. 18, 2016 2:43:34 AM server.ServerAcceptThread run
 INFOS: new connection recieved
-janv. 18, 2016 2:11:19 AM server.ServerConnectionThread authenticate
-INFOS: shamil vient de se connecter.
+janv. 18, 2016 2:43:40 AM server.ServerConnectionThread authenticate
+INFOS: leo vient de se connecter.
+Console : 
+janv. 18, 2016 2:43:52 AM server.ServerAcceptThread run
+INFOS: new connection recieved
+janv. 18, 2016 2:43:57 AM server.ServerConnectionThread authenticate
+INFOS: milan vient de se connecter.
+Console : 
+janv. 18, 2016 2:44:19 AM server.ServerUserThread run
+INFOS: ServerUserThread : Connection lost - milan
+janv. 18, 2016 2:44:27 AM server.ServerAcceptThread run
+INFOS: new connection recieved
+janv. 18, 2016 2:44:32 AM server.ServerConnectionThread authenticate
+INFOS: milan vient de se connecter.
 Console : 

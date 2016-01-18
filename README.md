@@ -1,2 +1,0 @@
-# EatMe
-Projet Java

@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -139,6 +141,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	public JPanel getLogoPanel() {
 		JPanel pane = new JPanel();
+
 		pane.setPreferredSize(new Dimension(200, 300));
 
 		SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
@@ -160,24 +163,36 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	private JPanel getDefaultPanel() {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
-
+		Box serverAddresseBox = Box.createHorizontalBox();
 		JLabel jlServer = new JLabel("Entrez l'adresse du serveur : ");
 		Color colorServer = (serverAdress.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlServer.setForeground(colorServer);
-		pane.add(jlServer);
 
 		JTextField jtfServer = new JTextField(serverAdress);
 		jtfServer.setPreferredSize(new Dimension(550, 25));
-		pane.add(jtfServer);
+
+		serverAddresseBox.add(jlServer);
+		serverAddresseBox.add(Box.createHorizontalStrut(6));
+		serverAddresseBox.add(jtfServer);
+
+		// pane.add(serverAddresseBox);
+
+		Box serverPortBox = Box.createHorizontalBox();
 
 		JLabel jlPort = new JLabel("Entrez le port du serveur : ");
 		Color colorPort = (serverPort.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlPort.setForeground(colorPort);
-		pane.add(jlPort);
 
 		JTextField jtfPort = new JTextField(serverPort);
 		jtfPort.setPreferredSize(new Dimension(550, 25));
-		pane.add(jtfPort);
+
+		serverPortBox.add(jlPort);
+		serverPortBox.add(Box.createHorizontalStrut(6));
+		serverPortBox.add(jtfPort);
+
+		jlPort.setPreferredSize(jlServer.getPreferredSize());
+
+		Box buttonBox = Box.createHorizontalBox();
 
 		JButton jbSubscribe = new JButton("S'inscrire");
 		jbSubscribe.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -213,7 +228,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				}
 			}
 		});
-		pane.add(jbSubscribe);
 
 		JButton jbConnect = new JButton("Se connecter");
 		jbConnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -249,8 +263,20 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				}
 			}
 		});
-		pane.add(jbConnect);
 
+		buttonBox.add(jbSubscribe);
+		buttonBox.add(Box.createHorizontalStrut(10));
+		buttonBox.add(jbConnect);
+
+		Box mainBox = Box.createVerticalBox();
+
+		mainBox.add(serverAddresseBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(serverPortBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(buttonBox);
+
+		pane.add(mainBox);
 		pane.add(getError());
 
 		return pane;
@@ -260,32 +286,49 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
 
+		Box userNameBox = Box.createHorizontalBox();
+
 		JLabel jlUsername = new JLabel("Saisir identifiant : ");
 		Color colorUsername = (username.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlUsername.setForeground(colorUsername);
-		pane.add(jlUsername);
 
 		JTextField jtfUsername = new JTextField(username);
 		jtfUsername.setPreferredSize(new Dimension(550, 25));
-		pane.add(jtfUsername);
+
+		userNameBox.add(jlUsername);
+		userNameBox.add(Box.createHorizontalStrut(6));
+		userNameBox.add(jtfUsername);
 
 		Color colorPasswords = (password.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 
+		Box passwordBox = Box.createHorizontalBox();
+
 		JLabel jlPassword = new JLabel("Saisir mot de passe : ");
 		jlPassword.setForeground(colorPasswords);
-		pane.add(jlPassword);
 
 		JPasswordField jpfPassword = new JPasswordField();
 		jpfPassword.setPreferredSize(new Dimension(550, 25));
-		pane.add(jpfPassword);
+
+		passwordBox.add(jlPassword);
+		passwordBox.add(Box.createHorizontalStrut(6));
+		passwordBox.add(jpfPassword);
+
+		Box confPasswordBox = Box.createHorizontalBox();
 
 		JLabel jlNewPassword = new JLabel("Confirmer mot de passe : ");
 		jlNewPassword.setForeground(colorPasswords);
-		pane.add(jlNewPassword);
 
 		JPasswordField jpfNewPassword = new JPasswordField();
 		jpfNewPassword.setPreferredSize(new Dimension(550, 25));
-		pane.add(jpfNewPassword);
+
+		confPasswordBox.add(jlNewPassword);
+		confPasswordBox.add(Box.createHorizontalStrut(6));
+		confPasswordBox.add(jpfNewPassword);
+
+		jlUsername.setPreferredSize(jlNewPassword.getPreferredSize());
+		jlUsername.setPreferredSize(jlNewPassword.getPreferredSize());
+
+		Box buttonBox = Box.createHorizontalBox();
 
 		JButton jbSubscribe = new JButton("S'inscrire");
 		jbSubscribe.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -318,7 +361,6 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				}
 			}
 		});
-		pane.add(jbSubscribe);
 
 		JButton jbCancel = new JButton("Retour");
 		jbCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -328,7 +370,21 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				switchMode(Mode.DEFAULT);
 			}
 		});
-		pane.add(jbCancel);
+
+		buttonBox.add(jbSubscribe);
+		buttonBox.add(Box.createHorizontalStrut(10));
+		buttonBox.add(jbCancel);
+
+		Box mainBox = Box.createVerticalBox();
+
+		mainBox.add(userNameBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(passwordBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(confPasswordBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(buttonBox);
+		pane.add(mainBox);
 
 		pane.add(getError());
 
@@ -339,23 +395,36 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		JPanel pane = new JPanel();
 		pane.setPreferredSize(dimension);
 
+		Box userNameBox = Box.createHorizontalBox();
+
 		JLabel jlUsername = new JLabel("Saisir identifiant : ");
 		Color colorUsername = (username.isEmpty()) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlUsername.setForeground(colorUsername);
-		pane.add(jlUsername);
+
 		JTextField jtfUsername = new JTextField(username);
 		jtfUsername.setPreferredSize(new Dimension(550, 25));
-		pane.add(jtfUsername);
+
+		userNameBox.add(jlUsername);
+		userNameBox.add(Box.createHorizontalStrut(6));
+		userNameBox.add(jtfUsername);
+
+		Box passwordBox = Box.createHorizontalBox();
 
 		JLabel jlPassword = new JLabel("Saisir mot de passe : ");
 		Color colorPasswords = (password.isEmpty() || !check) ? new Color(205, 92, 92) : new Color(0, 0, 0);
 		jlPassword.setForeground(colorPasswords);
-		pane.add(jlPassword);
 
 		JPasswordField jpfPassword = new JPasswordField();
 		jpfPassword.setPreferredSize(new Dimension(550, 25));
 		jlPassword.setForeground(colorPasswords);
-		pane.add(jpfPassword);
+
+		passwordBox.add(jlPassword);
+		passwordBox.add(Box.createHorizontalStrut(6));
+		passwordBox.add(jpfPassword);
+
+		jlUsername.setPreferredSize(jlPassword.getPreferredSize());
+
+		Box buttonBox = Box.createHorizontalBox();
 
 		JButton jbConnect = new JButton("Se connecter");
 		jbConnect.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -373,15 +442,14 @@ public class ClientGraphic extends JFrame implements WindowListener {
 					} else {
 						error = "Identifiants incorrects.";
 						check = false;
-						switchMode(mode);
+						switchMode(Mode.DEFAULT);
 					}
 				} else {
 					error = "Champs obligatoire !";
-					switchMode(mode);
+					switchMode(Mode.CONNECT);
 				}
 			}
 		});
-		pane.add(jbConnect);
 
 		JButton jbCancel = new JButton("Retour");
 		jbCancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -391,8 +459,19 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				switchMode(Mode.DEFAULT);
 			}
 		});
-		pane.add(jbCancel);
 
+		buttonBox.add(jbConnect);
+		buttonBox.add(Box.createHorizontalStrut(10));
+		buttonBox.add(jbCancel);
+
+		Box mainBox = Box.createVerticalBox();
+
+		mainBox.add(userNameBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(passwordBox);
+		mainBox.add(Box.createVerticalStrut(12));
+		mainBox.add(buttonBox);
+		pane.add(mainBox);
 		pane.add(getError());
 
 		return pane;
@@ -497,7 +576,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 
 	private JPanel getPlayerPanel(Player player) {
 		JPanel pane = new JPanel();
-		pane.setPreferredSize(new Dimension(150, 150));
+		pane.setSize(new Dimension(100, 100));
 		pane.setLayout(new GridLayout(3, 1));
 		pane.setBackground(Color.CYAN);
 
@@ -515,35 +594,89 @@ public class ClientGraphic extends JFrame implements WindowListener {
 	}
 
 	private JPanel getIngamePanel() {
+		boolean isWolf=client.getPlayer().getRole().isWolf();
 		JPanel pane = new JPanel();
-		pane.setPreferredSize(dimension);
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridheight = 150;
-		c.gridwidth = 100;
-
-		c.gridx = 2;
-		c.gridy = 1;
-		pane.add(getPlayerPanel(client.getPlayer()), c);
-
-		int cpt = 1;
-		Player[] players = client.getPlayers();
-		for (int i = 0; i < players.length; i++) {
-			if (i != client.getPosition()) {
-				c.fill = GridBagConstraints.HORIZONTAL;
-				if (cpt == 1) {
-					c.gridx = 1;
-					c.gridy = 0;
-				} else if (cpt == 2) {
-					c.gridx = 1;
-					c.gridy = 2;
-				}
-				pane.add(getPlayerPanel(players[i]), c);
-				cpt++;
-			}
+		pane.setSize(dimension);
+		pane.setBackground(Color.YELLOW);
+		pane.setLayout(new GridLayout(5, 5));
+		for (int i = 0; i < 25; i++) {
+			JPanel p = new JPanel();
+			JLabel l = new JLabel("" + i);
+			p.setBorder(BorderFactory.createLineBorder(Color.RED, 1));
+			p.add(l);
+			pane.add(p);
+			System.out.println(p.getPreferredSize());
 		}
+		Player[] players = client.getPlayers();
 
+		int nbPlayers = players.length;
+		
+		int cpt;
+		switch (nbPlayers) {
+		case 3:
+			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
+			int[] index3 = { 10, 14 };
+			cpt = 0;
+			for (int i = 0; i < players.length; i++) {
+				if (i != client.getPosition()) {
+					JPanel enemy = getPlayerPanel(players[i]);
+					
+					((JPanel) pane.getComponent(index3[cpt++])).add(enemy);
+				}
+			}
+
+			pane.repaint();
+			pane.revalidate();
+			break;
+			
+		case 4:
+			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
+			int[] index4 = { 2, 10, 14 };
+			cpt = 0;
+			for (int i = 0; i < players.length; i++) {
+				if (i != client.getPosition()) {
+					JPanel enemy = getPlayerPanel(players[i]);
+					((JPanel) pane.getComponent(index4[cpt++])).add(enemy);
+				}
+			}
+
+			pane.repaint();
+			pane.revalidate();
+			break;
+			
+		case 5:
+			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
+			int[] index5 = { 1, 3, 10, 14 };
+			cpt = 0;
+			for (int i = 0; i < players.length; i++) {
+				if (i != client.getPosition()) {
+					JPanel enemy = getPlayerPanel(players[i]);
+					((JPanel) pane.getComponent(index5[cpt++])).add(enemy);
+				}
+			}
+			break;
+			
+		case 6:
+			((JPanel) pane.getComponent(22)).add(getPlayerPanel(client.getPlayer()));
+			int[] index6 = { 2, 5, 9, 15, 19 };
+			cpt = 0;
+			for (int i = 0; i < players.length; i++) {
+				if (i != client.getPosition()) {
+					JPanel enemy = getPlayerPanel(players[i]);
+					((JPanel) pane.getComponent(index6[cpt++])).add(enemy);
+				}
+			}
+			break;
+
+		}
+		if(isWolf){
+			JLabel l=new JLabel("Qui mordre?");
+			((JPanel) pane.getComponent(12)).add(l);
+		}else{
+			JLabel l=new JLabel("Piege ou bonnet?");
+			((JPanel) pane.getComponent(12)).add(l);
+		}
+		
 		return pane;
 	}
 

@@ -201,12 +201,12 @@ public class ClientGraphic extends JFrame implements WindowListener {
 			case CONNECTION_LOST:
 				switchMode(Mode.CONNECTION_LOST, 0);
 				break;
-				
+
 			case ENNEMY_DISCONNECTED:
 				error = "Un des utilisateurs s'est déconnecté avant la fin de la partie.";
 				switchMode(Mode.MENU, 0);
 				break;
-				
+
 			default:
 				break;
 			}
@@ -233,8 +233,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 		jlImage.setPreferredSize(new Dimension(200, 200));
 		pane.add(jlImage);
 
-		JLabel jlWelcome = new JLabel(
-				"<html>Bienvenue " + client.getUsername() + "sur <br> Eat Me If You Can !</html>");
+		JLabel jlWelcome = new JLabel("<html>Bienvenue sur <br> Eat Me If You Can !</html>");
 		pane.add(jlWelcome);
 
 		return pane;
@@ -656,7 +655,7 @@ public class ClientGraphic extends JFrame implements WindowListener {
 				}
 			});
 			pane.add(jbCancel);
-			
+
 			pane.add(getError());
 		}
 

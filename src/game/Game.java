@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import enums.Message;
+import server.ServerUserThread;
 
 /**
  * <p>
@@ -10,13 +11,15 @@ import enums.Message;
  */
 public class Game extends Thread {
 	private Player[] players;
+	private ArrayList<ServerUserThread> usersThreads;
 	private ArrayList<Integer> roundWinners;
 	private ArrayList<Integer> roundNeutrals;
 	private ArrayList<Integer> gameLosers;
 	private int roundLoser;
 
-	public Game(Player[] players) {
+	public Game(Player[] players, ArrayList<ServerUserThread> usersThreads) {
 		this.players = players;
+		this.usersThreads=usersThreads;
 		randomRoles();
 	}
 

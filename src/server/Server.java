@@ -44,6 +44,8 @@ public class Server {
 		ServerAcceptThread sat = new ServerAcceptThread(conf.getPort(), usersThreads, queue, dbConnection);
 		log.info("Server started at " + addr.getHostAddress() + ":" + conf.getPort());
 		sat.start();
+		UserCheckThread uct=new UserCheckThread(usersThreads);
+		uct.start();
 		BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 		while (!flag) {
 			System.out.print("Console: ");
@@ -51,6 +53,7 @@ public class Server {
 			switch (s) {
 			case "exit":
 				sat.interrupt();
+				uct.interrupt();
 				System.exit(0);
 				break;
 			default:

@@ -76,7 +76,7 @@ public class Queue {
 				players[i] = new Player(users.get(i), i);
 			}
 			System.out.println("New Game");
-			Game game = new Game(players);
+			Game game = new Game(players,usersThreads);
 			game.start();
 			users.removeAll(users);
 		}

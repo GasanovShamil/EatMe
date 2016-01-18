@@ -78,7 +78,13 @@ public class ServerUserThread extends Thread {
 		}
 	}
 
+	
+	
 	public String getUsername() {
 		return user.getUsername();
+	}
+	
+	public User getUser(){
+		return user;
 	}
 }

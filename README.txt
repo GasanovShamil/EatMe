@@ -1,4 +1,4 @@
-# EatMeIfYouCan #
+# EatMeIfYouCan
 
 Logiciels nécessaires :
   MySQL v5.1 ou supérieure.
